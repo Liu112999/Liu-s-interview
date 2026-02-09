@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Prep</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+  :root { --bg:#0a0a0b;--surface:#141416;--surface2:#1c1c20;--border:#2a2a30;--text:#e8e8ec;--dim:#8888a0;--accent:#6ee7b7;--accent-dim:#6ee7b720; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+  .top-bar{padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0}
+  .search-wrap{flex:1;position:relative}
+  .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--dim)}
+  #searchInput{width:100%;padding:10px 12px 10px 38px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:15px;outline:none;transition:border-color .2s}
+  #searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+  #searchInput::placeholder{color:var(--dim)}
+  .mode-toggle{display:flex;gap:4px;background:var(--surface2);border-radius:8px;padding:3px;border:1px solid var(--border)}
+  .mode-btn{padding:7px 14px;border:none;background:transparent;color:var(--dim);font-family:inherit;font-size:13px;font-weight:500;border-radius:6px;cursor:pointer;transition:all .2s}
+  .mode-btn.active{background:var(--accent);color:var(--bg)}
+  .tag-bar{padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0}
+  .tag-chip{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
+  .tag-chip:hover{border-color:var(--accent);color:var(--text)}
+  .tag-chip.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+  .content{flex:1;overflow-y:auto;padding:12px 16px;scroll-behavior:smooth}
+  .content::-webkit-scrollbar{width:4px}.content::-webkit-scrollbar-track{background:transparent}.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+  .qa-card{margin-bottom:8px;border-radius:10px;border:1px solid var(--border);background:var(--surface);overflow:hidden;transition:border-color .2s}
+  .qa-card:hover{border-color:#4a4a55}
+  .qa-card.open{border-color:var(--accent)}
+  .qa-question{padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;user-select:none}
+  .qa-question:hover{background:var(--surface2)}
+  .q-badge{flex-shrink:0;width:22px;height:22px;border-radius:5px;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center}
+  .q-label{flex:1;font-weight:500;font-size:14px;line-height:1.5}
+  .q-tag{flex-shrink:0;padding:2px 8px;border-radius:4px;background:var(--surface2);color:var(--dim);font-size:11px;font-weight:500}
+  .expand-icon{flex-shrink:0;width:20px;height:20px;color:var(--dim);transition:transform .3s ease}
+  .qa-card.open .expand-icon{transform:rotate(180deg)}
+  .qa-answer{max-height:0;overflow:hidden;transition:max-height .4s ease}
+  .qa-card.open .qa-answer{max-height:3000px}
+  .answer-content{padding:0 16px 14px;font-size:15px;line-height:1.8;color:var(--text);font-weight:300;border-top:1px solid var(--border);padding-top:12px;white-space:pre-wrap}
+  .status-bar{padding:6px 16px;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--dim);flex-shrink:0}
+  .status-bar kbd{padding:1px 6px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);font-family:monospace;font-size:11px}
+  mark{background:var(--accent-dim);color:var(--accent);border-radius:2px;padding:0 2px}
+  .no-results{text-align:center;padding:40px 20px;color:var(--dim)}
+  .no-results .emoji{font-size:32px;margin-bottom:12px}
+  .edit-panel{display:none;flex:1;flex-direction:column;overflow:hidden}
+  .edit-panel.active{display:flex}
+  .search-mode.hidden{display:none}
+  .edit-header{padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+  .edit-header h3{font-size:14px;font-weight:500}
+  .edit-area{flex:1;padding:16px;overflow-y:auto}
+  .edit-area textarea{width:100%;min-height:400px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Courier New',monospace;font-size:13px;line-height:1.7;resize:vertical;outline:none}
+  .edit-area textarea:focus{border-color:var(--accent)}
+  .edit-hint{margin-bottom:12px;padding:12px 16px;background:var(--accent-dim);border-radius:8px;font-size:13px;color:var(--accent);line-height:1.6}
+  .edit-hint code{font-family:monospace;background:var(--bg);padding:2px 6px;border-radius:4px;font-size:12px}
+  .btn{padding:8px 18px;border:none;border-radius:7px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer}
+  .btn-primary{background:var(--accent);color:var(--bg)}
+  .btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="搜索关键词... (why Rotman, leadership, failure, weakness, conflict)" autofocus />
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btnSearch" onclick="switchMode('search')">搜索</button>
+    <button class="mode-btn" id="btnEdit" onclick="switchMode('edit')">编辑</button>
+  </div>
+</div>
+<div class="tag-bar" id="tagBar"></div>
+<div class="search-mode" id="searchMode"><div class="content" id="qaContainer"></div></div>
+<div class="edit-panel" id="editPanel">
+  <div class="edit-header">
+    <h3>编辑题目和答案</h3>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="resetEdits()">重置</button>
+      <button class="btn btn-primary" onclick="saveEdits()">保存并返回</button>
+    </div>
+  </div>
+  <div class="edit-area">
+    <div class="edit-hint"><strong>格式：</strong>每道题之间空一行 · <code>[分类]</code> 可选 · <code>Q: 问题</code> · <code>A: 答案（可多行）</code></div>
+    <textarea id="editArea" spellcheck="false"></textarea>
+  </div>
+</div>
+<div class="status-bar">
+  <span id="statusText"></span>
+  <span><kbd>↑</kbd><kbd>↓</kbd> 导航 · <kbd>Esc</kbd> 搜索</span>
+</div>
+<script>
+const RAW=`[Why Rotman]
+Q: Why do you want to attend the Rotman Master of Management program?
+A: I want to join the Rotman MMgt because it's exactly what I need at this stage. It's the program I'm most excited about, and the one I genuinely see as the best fit for how I think and where I want to go next.
+As co-founder and CPO of Look4Career, I've led a team and made strategic decisions. I've developed my own approach: I trust my judgment, make the call, then use data to validate. That approach helped us grow user engagement by 40% in the first year.
+But I know where I need to grow. My strength is in product-level decisions. What I want is to build on that foundation and structure my management thinking more systematically — to see the bigger picture beyond just product.
+That's why Rotman appeals to me. It's the top business school in Canada, in the heart of Toronto's business community — that environment and network matter to me. The MMgt curriculum gives me a structured foundation in management, while also incorporating analytics, which fits how I naturally work. And the Management Practicum lets me test my approach in new industries.
+So for me, Rotman MMgt is the right next step — to back up my judgment with real management skills.
+
+[Career Goals]
+Q: What are your short-term and long-term career goals, and how will the MMgt program help you achieve them?
+A: In the short term, I want to grow from a product-focused decision maker into a more complete business manager. As CPO at Look4Career, I’m confident in making calls on product direction. But when it comes to things like managing a cross-functional team or getting different people aligned toward the same goal, I realize that product instincts alone aren’t enough. So I need a stronger foundation in leadership and management, and that’s exactly what I want to build through the MMgt.
+And while studying, I’ll continue leading Look4Career. I’ve structured my team so I can focus on learning while still staying connected to the business. That way, I can actually apply what I learn in real time — using my company as a place to practice and sharpen those skills as I go.
+Looking further ahead, I see myself growing into a CEO-level role at Look4Career — being responsible for overall company direction and major strategic decisions. And if I feel ready and the timing is right, I might even start something new on my own. But to get there, I need to move beyond just product thinking and learn to see the whole business.
+That’s what I’m looking for from the MMgt, and I trust this is the right place for me to take that step.
+
+[Why Rotman]
+Q: Why is now the right time for you to pursue the MMgt?
+A: Now is the right time because I’m at a turning point. As CPO at Look4Career, I’ve been making product-level decisions and leading a small team. But I’ve started to realize that product instincts alone aren’t enough — when it comes to things like managing a cross-functional team or getting different people aligned toward the same goal, I need a stronger foundation in leadership and management.
+And with graduation coming up, this is the perfect timing to build that foundation while I can still apply it in real time. I’ll continue leading Look4Career while studying, so I can actually use my company as a place to practice and sharpen those skills as I go.
+On top of that, the MMgt curriculum gives me a structured foundation in management, while also incorporating analytics, which fits how I naturally work. And the Management Practicum lets me test my approach in new industries.
+So for me, this isn’t just about getting a degree — it’s about building on my decision-making instincts with real management skills, at the moment when I need them most. And that’s why I’m so confident this is the right path for me.
+
+[Personal]
+Q: Tell me a unique thing about yourself. / What makes you different from other applicants?
+A: That’s a great question. If I had to pick one thing, I’d say I’m a strategy-first data person.
+A lot of people with IT or Math backgrounds jump straight into building models. But for me, I always start by asking: what are we actually trying to decide here? What really matters?
+For example, when I co-founded Look4Career, we knew we couldn’t compete with big platforms on user base — they’d been around much longer than us. So I focused on what we could actually control: making the site faster, cleaner, and more appealing to young job seekers. And it worked — our user growth picked up significantly after that.
+But here’s the key point — if I had just followed the data from the start, it would’ve told me to copy what the big players were doing. Data tells you what most people do, not what you should do.
+That’s why I always make the strategic call first, then use data to see if I’m right. And that’s what I hope to keep developing at Rotman.
+
+[Why Rotman]
+Q: Why should we admit you into the Rotman MMgt program?
+A: I believe I can both contribute to and benefit from this program.
+First, I’m not starting from zero. As co-founder and CPO of Look4Career, I’ve already led a team, made strategic calls, and delivered real results — we grew user engagement by 40% in the first year. And I bring a clear decision-making style: I trust my judgment first, then use data to validate. That’s something I can share in classroom discussions and team projects.
+At the same time, I know exactly what I’m here to learn. My strength is in product-level decisions, but I want to build a stronger foundation in leadership and management — to see the bigger picture beyond just product.
+And here’s what makes my situation a bit different: I’ll be applying what I learn in real time. I’ll continue leading Look4Career while studying, so this program won’t just be theory for me — it’ll be something I practice every day.
+So I’m not just looking for a degree. I’m looking for a place to sharpen my instincts and become a more complete leader. And I’m confident I’ll give back as much as I gain.
+
+[Weaknesses]
+Q: What is one weakness or area of improvement for you, and what steps have you taken to address it?
+A: I’d say my weakness is that I sometimes trust my own judgment too quickly — I make the call fast, and then look for data to back it up. Most of the time it works, but I’ve realized that in team settings, moving too fast can leave people behind.
+For example, at Look4Career, there were times when I made a product decision and expected everyone to just follow. But I noticed that when people didn’t fully understand the reasoning, execution slowed down. So I started to adjust — I still trust my instincts, but now I take more time to explain my thinking and make sure the team is aligned before we move.
+That’s actually one of the reasons I want to join the MMgt. I know I’m good at making decisions, but I want to get better at bringing people along with me — leading, not just deciding. And I think the case discussions and team projects in the program will give me a lot of chances to practice that.
+So yes, it’s a weakness, but it’s one I’m actively working on — and I see the MMgt as part of that process.
+
+[Behavioral]
+Q: Describe a time when you worked effectively as part of a team.
+A: Well, this reminds me of some interesting things from Look4Career.
+When we first launched, our goal was to improve user engagement quickly. As CPO, I was responsible for product direction, but I knew I couldn’t do it alone — I needed the whole team on board.
+So I shared my idea with the team — focus on speed and simplicity first. Then I ran some A/B tests to show them the data, proving this approach could work. After that, we discussed together how to actually make it happen. The designer suggested some visual improvements that I hadn’t thought of, and the developers helped me understand what was realistic within our timeline.
+We ended up with a clear plan that everyone contributed to. We simplified the site, improved loading speed, and made small visual updates. The result was a 40% increase in user engagement within the first year.
+What I learned from that experience is that effective teamwork isn’t about one person having all the answers. It’s about combining different perspectives and moving in the same direction together. And that’s exactly what I want to keep developing through the MMgt.
+
+[Behavioral]
+Q: Tell us about a situation where you demonstrated leadership.
+A: Umm, if for me I would say… when we first started Look4Career, I was leading a small team — just a few developers and a designer.
+At the beginning, everyone had different ideas about what to prioritize. Some wanted to just copy what the big platforms were doing. But I shared my thinking with them: we’re a new platform, there’s no way we can compete on user base. So my idea was to focus on young job seekers. We’re young too — we’re the same age as most of them, so we know what they actually need.
+Not everyone was convinced at first. So I ran some tests to back it up. And the results showed that younger users responded really well to our approach. Once the team saw that, they got on board, and we moved forward together.
+For me, that experience showed me what leadership looks like in a small team — it’s not about giving orders. It’s about sharing your reasoning, backing it up, and making sure everyone’s aligned before you move.
+It’s a small example, but it taught me a lot. And that’s exactly what I want to keep developing through the MMgt.
+
+[Behavioral]
+Q: Give an example of a challenge or failure you have faced and how you overcame it.
+A: For me… I remember when we first started Look4Career. We were a new platform competing against much bigger players, and at first, the team wanted to just copy what they were doing.
+But I felt that was the wrong direction — there’s no way we could compete on user base. So I shared my thinking with the team: let’s focus on young job seekers instead. My reason was simple — we’re young too, we’re the same age as most of them, so we know what they actually need.
+Not everyone was convinced. So I ran an A/B test to back it up. After two weeks, the data was clear: users on the simpler version stayed longer and engaged more.
+Once the team saw the results, everyone got aligned and we moved forward together.
+That taught me something important: challenges are easier to overcome when you let the data speak. And that’s exactly what I want to learn and practice through the MMgt.
+
+[Behavioral]
+Q: Describe a conflict you encountered within a team and how you resolved it. / Tell us about a disagreement you had with a teammate.
+A: For me… I remember there was a time at Look4Career when I had a disagreement with one of our developers about product direction. I wanted to simplify the site and focus on speed, but he felt we should add more features first — he thought that’s what users expected.
+Instead of just pushing my opinion, I suggested we test it. I set up an A/B test — one version with more features, one version cleaner and faster. We ran it for two weeks. The data was clear: users on the simpler version stayed 30% longer and clicked through more pages.
+Once the team saw the results, everyone got aligned and we moved forward together.
+That experience taught me that conflict isn’t always bad. The key is to move from opinions to evidence, so it’s not about who’s right — it’s about what actually works.
+That’s something I want to keep improving on through the MMgt.
+
+[Behavioral]
+Q: Give an example of a failure you have faced and how you overcame it.
+A: For me… I remember when we first started Look4Career. We were a new platform competing against much bigger players. And honestly, at first, I was also tempted to just follow what they were doing — I thought that was the safe path. But it didn’t work. We weren’t getting traction.
+Later, I felt that was the wrong direction — there’s no way we could compete on user base. So I shared my thinking with the team: let’s focus on young job seekers instead. My reason was simple — we’re young too, we’re the same age as most of them, so we know what they actually need.
+Not everyone was convinced. So I ran an A/B test to back it up. After two weeks, the data was clear: users on the simpler version stayed longer and engaged more.
+Once the team saw the results, everyone got aligned and we moved forward together.
+That taught me something important: even when you start in the wrong direction, you can turn it around if you let the data speak. And I believe that mindset will carry me forward.`;
+
+let qaData=[],activeTag=null,activeCardIndex=-1;
+function parseQA(t){const blocks=t.split(/\n\s*\n/).filter(b=>b.trim());const r=[];for(const block of blocks){const lines=block.trim().split(’\n’);let tag=’’,q=’’,aLines=[],inA=false;for(const line of lines){const tr=line.trim();const tm=tr.match(/^[(.+?)]\s*$/);if(tm&&!q){tag=tm[1];continue}const qm=tr.match(/^Q:\s*(.+)/i);if(qm){q=qm[1];inA=false;continue}const am=tr.match(/^A:\s*(.+)/i);if(am){aLines.push(am[1]);inA=true;continue}if(inA&&tr)aLines.push(tr)}if(q)r.push({tag:tag||‘General’,question:q,answer:aLines.join(’\n’)})}return r}
+function getTags(){return[…new Set(qaData.map(d=>d.tag))]}
+function esc(s){return s.replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’)}
+function hl(text,q){let s=esc(text);if(!q)return s;q.toLowerCase().split(/\s+/).filter(Boolean).forEach(t=>{const e=t.replace(/[.*+?^${}()|[]\]/g,’\$&’);s=s.replace(new RegExp(`(${e})`,‘gi’),’<mark>$1</mark>’)});return s}
+function renderTags(){const b=document.getElementById(‘tagBar’),tags=getTags();b.innerHTML=`<button class="tag-chip ${!activeTag?'active':''}" onclick="filterTag(null)">全部 (${qaData.length})</button>`+tags.map(t=>`<button class="tag-chip ${activeTag===t?'active':''}" onclick="filterTag('${t.replace(/'/g,"\\'")}')">${t} (${qaData.filter(d=>d.tag===t).length})</button>`).join(’’)}
+function renderCards(q){q=q||’’;const c=document.getElementById(‘qaContainer’);let f=activeTag?qaData.filter(d=>d.tag===activeTag):[…qaData];if(q){const terms=q.toLowerCase().split(/\s+/).filter(Boolean);f=f.filter(d=>{const t=(d.question+’ ‘+d.answer+’ ‘+d.tag).toLowerCase();return terms.every(x=>t.includes(x))})}if(!f.length){c.innerHTML=’<div class="no-results"><div class="emoji">🔍</div><p>没有匹配的题目</p></div>’;document.getElementById(‘statusText’).textContent=`显示 0 / ${qaData.length}`;return}c.innerHTML=f.map((d,i)=>`<div class="qa-card${q&&i===0?' open':''}" onclick="toggleCard(this)"><div class="qa-question"><span class="q-badge">${i+1}</span><span class="q-label">${hl(d.question,q)}</span><span class="q-tag">${esc(d.tag)}</span><svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div><div class="qa-answer"><div class="answer-content">${hl(d.answer,q)}</div></div></div>`).join(’’);document.getElementById(‘statusText’).textContent=`显示 ${f.length} / ${qaData.length}`;if(q&&f.length)activeCardIndex=0}
+function toggleCard(el){const w=el.classList.contains(‘open’);document.querySelectorAll(’.qa-card.open’).forEach(c=>c.classList.remove(‘open’));if(!w){el.classList.add(‘open’);el.scrollIntoView({behavior:‘smooth’,block:‘nearest’})}}
+function filterTag(t){activeTag=t;renderTags();renderCards(document.getElementById(‘searchInput’).value)}
+function switchMode(m){document.getElementById(‘btnSearch’).classList.toggle(‘active’,m===‘search’);document.getElementById(‘btnEdit’).classList.toggle(‘active’,m===‘edit’);if(m===‘edit’){document.getElementById(‘searchMode’).classList.add(‘hidden’);document.getElementById(‘editPanel’).classList.add(‘active’);document.getElementById(‘tagBar’).style.display=‘none’;document.getElementById(‘editArea’).value=qaData.map(d=>`[${d.tag}]\nQ: ${d.question}\nA: ${d.answer}`).join(’\n\n’)}else{document.getElementById(‘searchMode’).classList.remove(‘hidden’);document.getElementById(‘editPanel’).classList.remove(‘active’);document.getElementById(‘tagBar’).style.display=‘flex’;document.getElementById(‘searchInput’).focus()}}
+function saveEdits(){const t=document.getElementById(‘editArea’).value;qaData=parseQA(t);try{localStorage.setItem(‘itp’,t)}catch(e){}activeTag=null;renderTags();renderCards(’’);switchMode(‘search’)}
+function resetEdits(){document.getElementById(‘editArea’).value=RAW}
+document.getElementById(‘searchInput’).addEventListener(‘input’,function(e){activeCardIndex=-1;renderCards(e.target.value)});
+document.addEventListener(‘keydown’,function(e){const inp=document.getElementById(‘searchInput’);if(e.key===‘Escape’){inp.focus();inp.select();return}if(document.activeElement===inp){if(e.key===‘ArrowDown’){e.preventDefault();const cards=document.querySelectorAll(’.qa-card’);if(cards.length){activeCardIndex=0;cards.forEach(c=>c.classList.remove(‘open’));cards[0].classList.add(‘open’);cards[0].scrollIntoView({behavior:‘smooth’,block:‘nearest’});inp.blur()}}return}const cards=[…document.querySelectorAll(’.qa-card’)];if(!cards.length)return;if(e.key===‘ArrowDown’){e.preventDefault();cards.forEach(c=>c.classList.remove(‘open’));activeCardIndex=Math.min(activeCardIndex+1,cards.length-1);cards[activeCardIndex].classList.add(‘open’);cards[activeCardIndex].scrollIntoView({behavior:‘smooth’,block:‘nearest’})}else if(e.key===‘ArrowUp’){e.preventDefault();if(activeCardIndex<=0){inp.focus();inp.select();cards.forEach(c=>c.classList.remove(‘open’));activeCardIndex=-1}else{cards.forEach(c=>c.classList.remove(‘open’));activeCardIndex–;cards[activeCardIndex].classList.add(‘open’);cards[activeCardIndex].scrollIntoView({behavior:‘smooth’,block:‘nearest’})}}});
+(function(){let s=null;try{s=localStorage.getItem(‘itp’)}catch(e){}qaData=parseQA(s||RAW);renderTags();renderCards(’’);document.getElementById(‘searchInput’).focus()})();
+</script>
+
+</body>
+</html>
