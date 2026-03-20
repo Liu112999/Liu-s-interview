@@ -1,15 +1,16 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Interview Prep</title>
+<title>Ivey MScDM Interview Prep</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
-  :root { --bg:#0a0a0b;--surface:#141416;--surface2:#1c1c20;--border:#2a2a30;--text:#e8e8ec;--dim:#8888a0;--accent:#6ee7b7;--accent-dim:#6ee7b720; }
+  :root { --bg:#0a0a0b;--surface:#141416;--surface2:#1c1c20;--border:#2a2a30;--text:#e8e8ec;--dim:#8888a0;--accent:#6ee7b7;--accent-dim:#6ee7b720;--red:#ff6b6b; }
   *{margin:0;padding:0;box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
   body{font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
-  .top-bar{padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0}
+  .bottom-bar{padding:10px 16px;background:var(--surface);border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0}
   .search-wrap{flex:1;position:relative}
   .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--dim)}
   #searchInput{width:100%;padding:10px 12px 10px 38px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:15px;outline:none;transition:border-color .2s}
@@ -17,7 +18,7 @@
   .mode-toggle{display:flex;gap:4px;background:var(--surface2);border-radius:8px;padding:3px;border:1px solid var(--border)}
   .mode-btn{padding:7px 14px;border:none;background:transparent;color:var(--dim);font-family:inherit;font-size:13px;font-weight:500;border-radius:6px;cursor:pointer;transition:all .2s}
   .mode-btn.active{background:var(--accent);color:var(--bg)}
-  .tag-bar{padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;gap:6px;overflow-x:auto;white-space:nowrap;flex-shrink:0}
+  .tag-bar{padding:8px 16px;background:var(--surface);border-top:1px solid var(--border);display:flex;gap:6px;overflow-x:auto;white-space:nowrap;flex-shrink:0}
   .tag-bar::-webkit-scrollbar{display:none}
   .tag-chip{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0}
   .tag-chip.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
@@ -29,27 +30,18 @@
   .q-label{flex:1;font-weight:500;font-size:14px;line-height:1.4}
   .q-tag{flex-shrink:0;padding:2px 6px;border-radius:4px;background:var(--surface2);color:var(--dim);font-size:10px}
   .qa-answer{max-height:0;overflow:hidden;transition:max-height 0.3s ease-out}
-  .qa-card.open .qa-answer{max-height:2000px}
+  .qa-card.open .qa-answer{max-height:5000px}
   .answer-content{padding:12px 16px 16px;font-size:15px;line-height:1.7;color:var(--text);border-top:1px solid var(--border);white-space:pre-wrap;font-weight:300}
+  .answer-content .note{color:var(--accent);font-size:13px;font-weight:500;background:var(--accent-dim);padding:8px 12px;border-radius:6px;display:block;margin:8px 0;white-space:pre-wrap}
   .edit-panel{display:none;flex:1;flex-direction:column;background:var(--bg)}
   .edit-panel.active{display:flex}
   .edit-area textarea{width:100%;height:60vh;padding:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:monospace;font-size:14px;outline:none;resize:none}
-  .status-bar{padding:8px 16px;background:var(--surface);border-top:1px solid var(--border);font-size:12px;color:var(--dim);display:flex;justify-content:space-between}
+  .kw{color:var(--red);font-weight:600}
   mark{background:rgba(110, 231, 183, 0.3);color:#6ee7b7;padding:0 2px;border-radius:2px}
 </style>
 </head>
 <body>
-<div class="top-bar">
-  <div class="search-wrap">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" id="searchInput" placeholder="搜索关键词..." autocomplete="off">
-  </div>
-  <div class="mode-toggle">
-    <button class="mode-btn active" id="btnSearch" onclick="switchMode('search')">搜索</button>
-    <button class="mode-btn" id="btnEdit" onclick="switchMode('edit')">编辑</button>
-  </div>
-</div>
-<div class="tag-bar" id="tagBar"></div>
+
 <div id="searchMode" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
   <div class="content" id="qaContainer"></div>
 </div>
@@ -63,95 +55,289 @@
   </div>
   <div class="edit-area"><textarea id="editArea" spellcheck="false"></textarea></div>
 </div>
-<div class="status-bar">
-  <span id="statusText">加载中...</span>
+
+<div class="tag-bar" id="tagBar"></div>
+<div class="bottom-bar">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="搜索关键词..." autocomplete="off">
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btnSearch" onclick="switchMode('search')">搜索</button>
+    <button class="mode-btn" id="btnEdit" onclick="switchMode('edit')">编辑</button>
+  </div>
 </div>
 
 <script>
-const RAW=`[Why Rotman]
-Q: Why do you want to attend the Rotman Master of Management program?
-A: I want to join the Rotman MMgt because it's exactly what I need at this stage. It's the program I'm most excited about, and the one I genuinely see as the best fit for how I think and where I want to go next.
-As co-founder and CPO of Look4Career, I've led a team and made strategic decisions. I've developed my own approach: I trust my judgment, make the call, then use data to validate. That approach helped us grow user engagement by 40% in the first year.
-But I know where I need to grow. My strength is in product-level decisions. What I want is to build on that foundation and structure my management thinking more systematically — to see the bigger picture beyond just product.
-That's why Rotman appeals to me. It's the top business school in Canada, in the heart of Toronto's business community — that environment and network matter to me. The MMgt curriculum gives me a structured foundation in management, while also incorporating analytics, which fits how I naturally work. And the Management Practicum lets me test my approach in new industries.
-So for me, Rotman MMgt is the right next step — to back up my judgment with real management skills.
+const RAW=`[Why Ivey]
+Q: Why are you interested in the <kw>Digital Management</kw> <kw>program</kw> at Ivey? What drew you to this <kw>program</kw>?
+A: I want to join the Digital Management program at Ivey because it fits exactly where I am right now.
+
+As co-founder and CPO of Look4Career, I led the product side for over a year. I made calls on what to build. I ran tests. I looked at data. And that part I'm good at.
+
+But I've started to feel a gap. When it comes to the bigger business picture — like managing a cross-functional team, thinking about strategy beyond just the product — I know I need more.
+
+That's what brought me to Ivey. A few things stand out to me.
+
+First, the case method. I'm someone who learns by doing. I don't learn well by just reading a textbook. I learn by looking at real problems and figuring out what I'd do. So the case method is perfect for me.
+
+Second, the digital focus. My whole background is in tech and data. I built a platform. I've done data science work. So Digital Management feels like a natural fit. It connects what I already know with what I still need to learn.
+
+And third, the people. I've read about the class size at Ivey. It's small. That means I'll really get to know my classmates. And I believe the best learning happens when you're around people from different backgrounds who challenge how you think.
+
+So for me, Ivey MScDM is the right next step. It fills the gap between where I am and where I want to go.
 
 [Career Goals]
-Q: What are your short-term and long-term career goals, and how will the MMgt program help you achieve them?
-A: In the short term, I want to grow from a product-focused decision maker into a more complete business manager. As CPO at Look4Career, I’m confident in making calls on product direction. But when it comes to things like managing a cross-functional team or getting different people aligned toward the same goal, I realize that product instincts alone aren’t enough. So I need a stronger foundation in leadership and management, and that’s exactly what I want to build through the MMgt.
-And while studying, I’ll continue leading Look4Career. I’ve structured my team so I can focus on learning while still staying connected to the business. That way, I can actually apply what I learn in real time — using my company as a place to practice and sharpen those skills as I go.
-Looking further ahead, I see myself growing into a CEO-level role at Look4Career — being responsible for overall company direction and major strategic decisions. And if I feel ready and the timing is right, I might even start something new on my own. But to get there, I need to move beyond just product thinking and learn to see the whole business.
-That’s what I’m looking for from the MMgt, and I trust this is the right place for me to take that step.
+Q: What are your <kw>short-term</kw> and <kw>long-term</kw> <kw>career goals</kw>? How do you see this program <kw>helping</kw> you?
+A: In the short term, I want to grow from a product-focused person into a more complete business leader.
 
-[Why Rotman]
-Q: Why is now the right time for you to pursue the MMgt?
-A: Now is the right time because I’m at a turning point. As CPO at Look4Career, I’ve been making product-level decisions and leading a small team. But I’ve started to realize that product instincts alone aren’t enough — when it comes to things like managing a cross-functional team or getting different people aligned toward the same goal, I need a stronger foundation in leadership and management.
-And with graduation coming up, this is the perfect timing to build that foundation while I can still apply it in real time. I’ll continue leading Look4Career while studying, so I can actually use my company as a place to practice and sharpen those skills as I go.
-On top of that, the MMgt curriculum gives me a structured foundation in management, while also incorporating analytics, which fits how I naturally work. And the Management Practicum lets me test my approach in new industries.
-So for me, this isn’t just about getting a degree — it’s about building on my decision-making instincts with real management skills, at the moment when I need them most. And that’s why I’m so confident this is the right path for me.
+Let me explain what I mean. At Look4Career, I was the CPO. I led the product side. I made calls on what to build, how to test, how to improve. And that part I'm confident in. We grew user engagement by 40% in the first year. So I know I can make good product decisions.
+
+But through that experience, I also found out what I'm missing. When I had to get different people aligned — developers, designers, my co-founder — I realized product thinking alone isn't enough. I need to understand how to lead more people. How to manage across different teams. How to think about the bigger business picture — not just the product.
+
+That's exactly what I want to build in the short term through the MScDM. The case method will train me to think about business problems from every angle. The team projects will push me to practice leading in different settings. And the digital focus connects directly to my background in tech and data.
+
+I also want to use the program to explore different industries. At Look4Career, I only worked in one space — job platforms for young people. But I know the skills I've built — data thinking, product strategy, team leadership — can work in many fields. So I want to use the MScDM to see where else I can apply these skills. Maybe fintech. Maybe e-commerce. Maybe something I haven't thought of yet.
+
+In the long term, I see myself growing into a senior leadership role — someone who's responsible for overall business direction and strategic decisions. The MScDM is the step I need to get there.
+
+So that's why I'm here. I know what I'm good at. I know what I need. And I believe Ivey can help me close that gap.
+
+⚡ 追问 Plan B: That's a good question. If my first path doesn't work out, I'd go into product management or data strategy at a larger tech company. I already have the technical skills — I've done data science, A/B testing, product development. So I could bring that to a bigger company and learn how larger teams work. And honestly, even that path would benefit from what I learn at Ivey. Because leading a product team at a bigger company still needs strong management skills.
+
+[Business News]
+Q: How do you stay up to date with <kw>business news</kw>? Do you follow any <kw>sources</kw>, or listen to any <kw>podcasts</kw>? Share a <kw>recent</kw> piece of business news.
+A: Sure. One thing I've been following recently is what's happening with AI.
+
+In the past few months, AI has been growing really fast. Companies like OpenAI and Google keep putting out new models. And it's not just about tech anymore. AI is changing how businesses work. How people find jobs. How companies make decisions.
+
+This matters to me because at Look4Career, I used AI tools and data models to improve our platform. So I pay close attention to where AI is going. Because I think in the next few years, every business will need to figure out how to use AI. And the ones who figure it out first will win.
+
+As for how I stay up to date — I mostly use YouTube. I follow a few channels that talk about tech and business news. I find it easy to keep up that way. I also read the Financial Times sometimes when I want to go deeper on a topic.
+
+And I listen to podcasts too. One I really like is "How I Built This" by Guy Raz. He talks to founders about how they started their companies. I find their stories really helpful.
+
+So yeah, I try to stay close to what's happening. Especially anything around AI and digital business. Because that's the world I want to work in.
+
+[Leadership]
+Q: Tell me about a time when you were in a <kw>leadership</kw> role. What <kw>challenges</kw> did you face, and how did you <kw>handle</kw> them?
+A: When I started Look4Career, I was leading a small team — a few developers and a designer. And at the beginning, it was hard. Because everyone had different ideas about what to build.
+
+Some people wanted to copy the big job sites. They said that's the safe way. But I felt that was wrong. We're a small startup. There's no way we can beat the big players by doing the same thing.
+
+So I shared my thinking with the team. I said: let's focus on young job seekers. We're young too. We're the same age as them. We know what they need. And instead of a big, heavy site, let's make ours fast and clean.
+
+Not everyone was on board at first. So I ran an A/B test. I set up two versions. One was more like the big sites. One was the simple, fast version. After two weeks, the data was clear. Users on the simpler version stayed longer. They clicked more.
+
+Once the team saw that, everyone got on the same page. We moved forward together. And we ended up growing user engagement by 40% in the first year.
+
+What I learned is: as a leader, you can't just tell people what to do. You have to show them why. And if you can back up your thinking with real data, people will trust you.
+
+⚡ 追问 How did your team react?: At first, some people were not sure about my idea. One developer felt we should add more features, not take them away. I didn't push him. Instead, I said: let's test both and see what works. And when the data showed that the simpler version was better, he was actually the first one to say "okay, let's go with this." I think that's because I didn't make it about who's right. I made it about what works. And that made things much easier.
 
 [Personal]
-Q: Tell me a unique thing about yourself. / What makes you different from other applicants?
-A: That’s a great question. If I had to pick one thing, I’d say I’m a strategy-first data person.
-A lot of people with IT or Math backgrounds jump straight into building models. But for me, I always start by asking: what are we actually trying to decide here? What really matters?
-For example, when I co-founded Look4Career, we knew we couldn’t compete with big platforms on user base — they’d been around much longer than us. So I focused on what we could actually control: making the site faster, cleaner, and more appealing to young job seekers. And it worked — our user growth picked up significantly after that.
-But here’s the key point — if I had just followed the data from the start, it would’ve told me to copy what the big players were doing. Data tells you what most people do, not what you should do.
-That’s why I always make the strategic call first, then use data to see if I’m right. And that’s what I hope to keep developing at Rotman.
+Q: Has there ever been a time when someone <kw>misunderstood</kw> something about you? What happened and how did you <kw>deal</kw> with it?
+A: Yes. I think people sometimes see me as someone who doesn't care what others think. Because I'm very direct. And I move fast. When I have an idea, I want to go right away. I don't wait around.
 
-[Why Rotman]
-Q: Why should we admit you into the Rotman MMgt program?
-A: I believe I can both contribute to and benefit from this program.
-First, I’m not starting from zero. As co-founder and CPO of Look4Career, I’ve already led a team, made strategic calls, and delivered real results — we grew user engagement by 40% in the first year. And I bring a clear decision-making style: I trust my judgment first, then use data to validate. That’s something I can share in classroom discussions and team projects.
-At the same time, I know exactly what I’m here to learn. My strength is in product-level decisions, but I want to build a stronger foundation in leadership and management — to see the bigger picture beyond just product.
-And here’s what makes my situation a bit different: I’ll be applying what I learn in real time. I’ll continue leading Look4Career while studying, so this program won’t just be theory for me — it’ll be something I practice every day.
-So I’m not just looking for a degree. I’m looking for a place to sharpen my instincts and become a more complete leader. And I’m confident I’ll give back as much as I gain.
+At Look4Career, I noticed that some team members thought I was not listening to them. Because I'd make a call quickly and just say "let's do this." But that wasn't true. I did care about what they thought. I just didn't show it well.
+
+When I found out, I started to change. I began asking more questions before making a call. I'd say things like: "Here's what I'm thinking. What do you guys see? Am I missing something?" And once people saw that I actually wanted their input, things got much better.
+
+So the misunderstanding was that I don't care about others' views. The truth is I do care. A lot. I just needed to learn how to show it. And I think that's something I'm still working on — slowing down just enough so people know I'm hearing them.
+
+[Feedback]
+Q: Tell me about a time when you <kw>felt good</kw> about something you did, but then you received <kw>negative</kw> or <kw>constructive feedback</kw>. How did you respond?
+A: This happened at Look4Career. We had just finished a big update to the site. I was really proud of it. We made the design cleaner. We improved loading speed. And I thought users would love it.
+
+But then we got feedback from some of our users. A few of them said the new design was confusing. They couldn't find certain features anymore. I was surprised. Because I thought we made everything better.
+
+At first, I felt defensive. I wanted to say "no, this is better, you'll get used to it." But I stopped myself. I looked at the data. And the numbers backed up what the users said. Some pages had lower click-through rates after the change.
+
+So I went back to the team and said: "Okay, we need to fix this. The users are right." We kept the speed improvements. But we brought back some of the old layout so people could find things easier.
+
+What I learned is: just because you worked hard on something doesn't mean it's perfect. Feedback is a gift. Even when it hurts. Because it shows you what you can't see on your own.
+
+[Behavioral]
+Q: Can you share a time when you came up with a <kw>new idea</kw> and had to <kw>convince</kw> others to get on board?
+A: This happened when I was working as a Data Scientist Consultant at Mocha Tech Solutions.
+
+We had a client who needed a predictive model. The team's plan was to build the model from scratch. That's the normal way. Everyone was used to it.
+
+But I had a different idea. I suggested we use transfer learning instead. Basically, we take an existing model that's already been trained — like GPT-4.1 Mini — and fine-tune it for the client's specific needs. It would be faster. Cheaper. And in many cases, more accurate.
+
+At first, the team was not sure. They said: "We've always built models from scratch. That's what the client expects. Why change it?"
+
+I understood their concern. So I didn't just push my opinion. I put together a small demo. I took one of our tasks, fine-tuned an existing model on it, and compared the results with the traditional approach. The fine-tuned version was faster to build and performed just as well.
+
+When the team saw the results, they started to come around. And I also explained the business side: if we can deliver faster, the client saves money, and we can take on more projects at the same time.
+
+In the end, the team agreed. We used the approach. And it worked. We improved the client's decision-making accuracy by 15% and cut delivery time by 20%.
+
+What I learned is: when you have a new idea, you can't just tell people it's better. You have to show them. A small proof goes a long way.
+
+[Behavioral]
+Q: Describe a situation where you had to make a <kw>decision</kw> with very <kw>limited information</kw>. What did you do?
+A: This happened early on at Look4Career. We had just launched the platform. And we needed to decide who our main users would be. Should we go after everyone? Or pick a specific group?
+
+The problem was, we had very little data. We had just started. We didn't have enough users yet to really know who was coming to the site and why.
+
+But I couldn't wait. If we tried to serve everyone, we'd be just another job site. We'd lose.
+
+So I made a call based on what I knew. I'm young. My co-founders are young. We understand what young job seekers want — because we are them. So I said: let's focus on that group. Make the site for people like us.
+
+It wasn't based on a big data set. It was based on my gut feeling and my own experience. But right after that, I set up ways to test it. I watched the numbers. I talked to users. And the early results showed I was right. Young users were staying on the site. They liked it.
+
+So I learned that sometimes you don't have all the data. But you still need to move. Make the best call you can. And then test it right away. That's how you turn a guess into a real plan.
+
+[Behavioral]
+Q: How do you push yourself out of your <kw>comfort zone</kw>? Can you give me a specific <kw>example</kw>?
+A: The biggest time was starting Look4Career. Before that, I was just a student. I studied economics. I did some internships. I was good at school stuff. But I'd never built anything real.
+
+When the idea for Look4Career came up, I was scared. I didn't know how to run a company. I didn't know how to lead a team. I didn't know if it would work.
+
+But I said yes anyway. And I figured it out as I went. I learned how to lead developers. How to make product calls. How to talk to users. How to read data and change direction when something wasn't working.
+
+None of that was comfortable. Every week, I was doing something I'd never done before. And there were times when I wanted to quit. Especially in the early days when nothing was growing.
+
+But I kept going. And slowly, things started working. Users came. Engagement grew. And I grew too. As a person. As a leader.
+
+So that's how I push myself. I say yes to things that scare me. And then I figure it out along the way. Because the biggest growth always happens outside the safe zone.
+
+[Behavioral]
+Q: Tell me about a time when you had a <kw>conflict</kw> with someone — maybe a teammate or colleague. How did you <kw>work through</kw> it?
+A: This happened during a group project in one of my economics courses at Windsor.
+
+We had a team of four people. We needed to write a research paper together. Early on, we had to pick a topic. I wanted to do something about digital platforms and market competition. I thought it was interesting and I had real experience with it from Look4Career.
+
+But one of my teammates wanted to do a completely different topic — something about trade policy. He felt very strongly about it. And he was quite vocal. He kept saying my idea was "too narrow" and "not serious enough."
+
+I felt frustrated. Not because he disagreed with me. But because of the way he said it. It felt like he was dismissing my idea without really listening.
+
+But I didn't fight back. Instead, I asked him: "Okay, tell me more about why you think trade policy is the better choice." And I really listened. He made some fair points. His topic had more published data to work with. That was a real advantage for a research paper.
+
+Then I explained my side too. I said: "I think digital platforms is more relevant to what we're learning. And I can bring real examples from my own experience."
+
+In the end, we found a middle ground. We combined the two ideas — we wrote about how digital platforms are affected by trade policy. It actually turned out to be a stronger topic than either of ours alone.
+
+What I learned is: when someone disagrees with you, the worst thing you can do is push harder. The better thing is to listen first. Understand where they're coming from. And then find a way to bring both sides together. That usually gives you a better answer than either person had alone.
+
+[Behavioral]
+Q: Have you been in a situation where a <kw>teammate</kw> wasn't <kw>pulling their weight</kw> or wasn't <kw>contributing</kw>? What did you do?
+A: Yes. At Look4Career, there was a time when one of our developers was not keeping up. He was missing deadlines. His work wasn't at the level it should be. And it was slowing the whole team down.
+
+My first reaction was frustration. I wanted to just say: "Hey, you need to do better." But I stopped and thought about it. Maybe there's a reason.
+
+So I talked to him one-on-one. I asked how he was doing. And it turned out he was stuck on a technical problem that he didn't know how to solve. But he was too embarrassed to ask for help.
+
+Once I knew that, I paired him with another developer who had more experience in that area. And I also made it clear to the whole team: it's okay to ask for help. That's not a weakness. That's how we get better together.
+
+After that, his work improved a lot. He started asking questions earlier. He hit his deadlines. And the team moved faster.
+
+What I learned is: when someone isn't contributing, the first step is to find out why. Don't just blame them. Understand the problem first. Then fix it together.
+
+[Behavioral]
+Q: Can you walk me through a time when you had to completely <kw>redo</kw> a project or assignment? How did you <kw>handle</kw> that <kw>mentally</kw>?
+A: This happened at Look4Career. Early on, we built the first version of our site based on what we thought users wanted. We spent weeks on it. A lot of time. A lot of work.
+
+But when we launched, the numbers were bad. Users weren't staying. They weren't coming back. I looked at the data and I had to face the truth: our approach was wrong. We had built too much. Too many features. Too confusing.
+
+Honestly, that was a hard moment. I felt like all that work was wasted. And there was a voice in my head saying: "Maybe just keep going. Maybe it'll get better."
+
+But I knew deep down that we needed to start over. Not from zero. But we needed to change a lot.
+
+So I told the team: "Look, I know this is hard. But the data is telling us something. We need to simplify. Focus on what matters. And rebuild."
+
+It wasn't easy. Some people were tired. But we did it. We stripped the site down. Made it faster. Cleaner. Focused on young job seekers. And this time, it worked. Engagement went up 40%.
+
+What I learned is: redoing something isn't failure. It's learning. The first version taught us what not to do. And without that, we never would've built the better version.
+
+[Behavioral]
+Q: What would you say has been the <kw>biggest challenge</kw> you've faced so far in your life or career?
+A: The biggest challenge was the early days of Look4Career. We had just launched. And nothing was happening. Users weren't coming. Growth was flat.
+
+I kept asking myself: did I make the wrong call? Should I just go find a normal job instead? That feeling was really hard. Because I had put so much time into this. And people around me were watching.
+
+But I didn't quit. I went back to the basics. I talked to users. I looked at the data. I ran small tests to see what worked. And slowly, I found the answer. We were trying to be too much. We needed to be simple. Focused. Fast.
+
+Once I made that change, things started moving. But the real challenge wasn't the product. It was the time before things got better. Sitting with doubt. Wondering if I was wrong. That's the hardest thing I've ever been through.
+
+And I think it made me stronger. Because now I know: when things are bad, you don't quit. You go back to the data. You test. You change. And you keep going.
+
+[Personal]
+Q: What do you consider your most significant <kw>accomplishment</kw> to date, and <kw>why</kw> does it matter to you?
+A: I'd say it's building Look4Career from nothing to a real platform with real users.
+
+When we started, we had no users. No money. No name. Just an idea. And a lot of people said it wouldn't work. They said: "Why would you go against the big job sites?"
+
+But I believed we had something different. We're young. We know what young job seekers want. So I led the product side. I made calls. I ran tests. I kept pushing the team to make things better.
+
+And in the first year, we grew user engagement by 40%. We got real users. We got funding. People started to take us seriously.
+
+But honestly, the number isn't what matters most to me. What matters is that I proved to myself: I can build something real. I can take an idea from nothing and make it work. That changed how I see myself. Before Look4Career, I wasn't sure I could do it. Now I know I can.
 
 [Weaknesses]
-Q: What is one weakness or area of improvement for you, and what steps have you taken to address it?
-A: I’d say my weakness is that I sometimes trust my own judgment too quickly — I make the call fast, and then look for data to back it up. Most of the time it works, but I’ve realized that in team settings, moving too fast can leave people behind.
-For example, at Look4Career, there were times when I made a product decision and expected everyone to just follow. But I noticed that when people didn’t fully understand the reasoning, execution slowed down. So I started to adjust — I still trust my instincts, but now I take more time to explain my thinking and make sure the team is aligned before we move.
-That’s actually one of the reasons I want to join the MMgt. I know I’m good at making decisions, but I want to get better at bringing people along with me — leading, not just deciding. And I think the case discussions and team projects in the program will give me a lot of chances to practice that.
-So yes, it’s a weakness, but it’s one I’m actively working on — and I see the MMgt as part of that process.
+Q: What's the biggest <kw>personality</kw> trait or habit that <kw>holds you back</kw>, and what are you doing about it?
+A: I'd say I trust my own thinking too quickly. When I feel like something is the right call, I want to go right away. And most of the time, it works out. But sometimes I move so fast that I leave people behind.
 
-[Behavioral]
-Q: Describe a time when you worked effectively as part of a team.
-A: Well, this reminds me of some interesting things from Look4Career.
-When we first launched, our goal was to improve user engagement quickly. As CPO, I was responsible for product direction, but I knew I couldn’t do it alone — I needed the whole team on board.
-So I shared my idea with the team — focus on speed and simplicity first. Then I ran some A/B tests to show them the data, proving this approach could work. After that, we discussed together how to actually make it happen. The designer suggested some visual improvements that I hadn’t thought of, and the developers helped me understand what was realistic within our timeline.
-We ended up with a clear plan that everyone contributed to. We simplified the site, improved loading speed, and made small visual updates. The result was a 40% increase in user engagement within the first year.
-What I learned from that experience is that effective teamwork isn’t about one person having all the answers. It’s about combining different perspectives and moving in the same direction together. And that’s exactly what I want to keep developing through the MMgt.
+At Look4Career, there were times when I made a decision and just told the team: "This is what we're doing." I didn't ask how they felt. I didn't explain my thinking. And later, I found out some people had concerns from the start. But they didn't feel like there was space to say it.
 
-[Behavioral]
-Q: Tell us about a situation where you demonstrated leadership.
-A: Umm, if for me I would say… when we first started Look4Career, I was leading a small team — just a few developers and a designer.
-At the beginning, everyone had different ideas about what to prioritize. Some wanted to just copy what the big platforms were doing. But I shared my thinking with them: we’re a new platform, there’s no way we can compete on user base. So my idea was to focus on young job seekers. We’re young too — we’re the same age as most of them, so we know what they actually need.
-Not everyone was convinced at first. So I ran some tests to back it up. And the results showed that younger users responded really well to our approach. Once the team saw that, they got on board, and we moved forward together.
-For me, that experience showed me what leadership looks like in a small team — it’s not about giving orders. It’s about sharing your reasoning, backing it up, and making sure everyone’s aligned before you move.
-It’s a small example, but it taught me a lot. And that’s exactly what I want to keep developing through the MMgt.
+That was a big wake-up call for me. Because I realized: being fast doesn't help if the team isn't with you. A decision is only good if people actually follow it.
 
-[Behavioral]
-Q: Give an example of a challenge or failure you have faced and how you overcame it.
-A: For me… I remember when we first started Look4Career. We were a new platform competing against much bigger players, and at first, the team wanted to just copy what they were doing.
-But I felt that was the wrong direction — there’s no way we could compete on user base. So I shared my thinking with the team: let's focus on young job seekers instead. My reason was simple — we’re young too, we’re the same age as most of them, so we know what they actually need.
-Not everyone was convinced. So I ran an A/B test to back it up. After two weeks, the data was clear: users on the simpler version stayed longer and engaged more.
-Once the team saw the results, everyone got aligned and we moved forward together.
-That taught me something important: challenges are easier to overcome when you let the data speak. And that’s exactly what I want to learn and practice through the MMgt.
+So now, before I make a big call, I stop and ask: "What do you think? Am I missing something?" It's a small thing. But it's made a big difference. People feel more involved. And our decisions end up stronger.
 
-[Behavioral]
-Q: Describe a conflict you encountered within a team and how you resolved it. / Tell us about a disagreement you had with a teammate.
-A: For me… I remember there was a time at Look4Career when I had a disagreement with one of our developers about product direction. I wanted to simplify the site and focus on speed, but he felt we should add more features first — he thought that’s what users expected.
-Instead of just pushing my opinion, I suggested we test it. I set up an A/B test — one version with more features, one version cleaner and faster. We ran it for two weeks. The data was clear: users on the simpler version stayed 30% longer and clicked through more pages.
-Once the team saw the results, everyone got aligned and we moved forward together.
-That experience taught me that conflict isn’t always bad. The key is to move from opinions to evidence, so it’s not about who’s right — it’s about what actually works.
-That’s something I want to keep improving on through the MMgt.
+It's still something I work on every day. But I think knowing it is the first step.
 
-[Behavioral]
-Q: Give an example of a failure you have faced and how you overcame it.
-A: For me… I remember when we first started Look4Career. We were a new platform competing against much bigger players. And honestly, at first, I was also tempted to just follow what they were doing — I thought that was the safe path. But it didn’t work. We weren’t getting traction.
-Later, I felt that was the wrong direction — there’s no way we could compete on user base. So I shared my thinking with the team: let’s focus on young job seekers instead. My reason was simple — we’re young too, we’re the same age as most of them, so we know what they actually need.
-Not everyone was convinced. So I ran an A/B test to back it up. After two weeks, the data was clear: users on the simpler version stayed longer and engaged more.
-Once the team saw the results, everyone got aligned and we moved forward together.
-That taught me something important: even when you start in the wrong direction, you can turn it around if you let the data speak. And I believe that mindset will carry me forward.`;
+[Why Ivey]
+Q: If you join Ivey, what's your plan to get <kw>involved</kw> and really become part of the <kw>community</kw>?
+A: I want to be an active part of the Ivey community. Not just show up to class.
+
+First, I want to bring my startup experience into the classroom. I know not everyone has built a company before. So I can share what I've learned — the good and the bad. That's useful in case discussions.
+
+Second, I want to join clubs or groups that focus on tech and entrepreneurship. I want to meet people who are also building things. And learn from people who are different from me.
+
+And third, I want to help others. At my school right now, I'm a teaching assistant. I help students with economics. I like that. So at Ivey, I'd want to do something similar — help classmates, share what I know, and learn from them at the same time.
+
+I'm not the kind of person who just sits in the back. I like to get involved. And I think Ivey is the kind of place where that's encouraged.
+
+[Personal]
+Q: What do you think you can <kw>bring</kw> to Ivey and to your <kw>classmates</kw>?
+A: I think I can bring three things.
+
+First, real startup experience. I'm not just studying business. I actually built one. So when we talk about cases in class, I can connect it to what I've lived through. That makes discussions more real.
+
+Second, a different way of thinking. I'm a strategy-first person. I don't start with data. I start with asking: what are we really trying to do? And then I use data to check if I'm right. I think that way of thinking can add something to the group.
+
+And third, my background. I grew up in China and moved to Canada on my own. I've built my life here from nothing. That gives me a different view on things. I notice things that people who grew up here might not see. And I think that kind of view can make discussions richer.
+
+So I'm not just here to learn. I'm here to give back too.
+
+[Why Ivey]
+Q: How has your <kw>academic background</kw> <kw>prepared</kw> you for studying <kw>Digital Management</kw>?
+A: My background is in economics, with a minor in applied IT and math. So I've studied both the business side and the tech side.
+
+On the technical side, I've learned programming, data analysis, and statistics. I've done machine learning work. I even competed in a Kaggle deep learning competition and got a silver medal. So I can handle the data and analytics parts of the program.
+
+On the business side, my economics training taught me how to think about markets, decision-making, and how people behave. That's useful for understanding how digital businesses work.
+
+And on top of that, I built Look4Career. So I've seen how the academic stuff plays out in the real world. I've used A/B testing, data models, and product thinking — all in a real company.
+
+So I feel ready for the program. I have the technical skills. I have the business thinking. And I have the hands-on experience to tie it all together.
+
+[Career Goals]
+Q: Besides your first career choice, what would be your <kw>plan B</kw>? If that didn't work out, what would you do <kw>instead</kw>?
+A: If my first path doesn't work out, I'd go into product management or data strategy at a bigger tech company.
+
+I already have the skills for it. I've done data science work. I've led product development. I've done A/B testing and worked with cross-functional teams.
+
+So I could step into a bigger company and learn how things work at a larger scale. How bigger teams operate. How larger organizations make decisions.
+
+And honestly, even that path would benefit from what I learn at Ivey. Because managing a product team at a big company still needs strong leadership and management skills. So either way, the MScDM makes me better.
+
+[Closing]
+Q: Do you have any <kw>questions</kw> for me — about the program, the school, anything at all?
+A: Option A: "What's one thing that students say they found most surprising or most valuable about the program after they finish?"
+
+Option B: "I'm really looking forward to being on campus at Ivey. Could you tell me a bit about the learning environment — like, do students often use the study spaces or library to work on cases together outside of class? I'd love to know what the day-to-day experience is like beyond the classroom."`;
 
 let qaData = [];
 let activeTag = null;
@@ -188,15 +374,19 @@ function renderCards(query = '') {
   if (query) {
     const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
     filtered = filtered.filter(d => {
-      const content = (d.question + d.answer + d.tag).toLowerCase();
+      const content = (d.question + d.answer + d.tag).toLowerCase().replace(/<[^>]*>/g,'');
       return terms.every(t => content.includes(t));
     });
   }
 
   if (filtered.length === 0) {
-    container.innerHTML = '<div class="no-results">🔍 没有找到匹配内容</div>';
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--dim)">没有找到匹配内容</div>';
   } else {
-    container.innerHTML = filtered.map((d, i) => `
+    container.innerHTML = filtered.map((d, i) => {
+      const answerHtml = d.answer
+        .replace(/\n/g, '<br>')
+        .replace(/⚡([^:：]+)[:|：]/g, '<span class="note">⚡ $1:</span>');
+      return `
       <div class="qa-card" onclick="this.classList.toggle('open')">
         <div class="qa-question">
           <div class="q-badge">${i+1}</div>
@@ -204,12 +394,11 @@ function renderCards(query = '') {
           <div class="q-tag">${d.tag}</div>
         </div>
         <div class="qa-answer">
-          <div class="answer-content">${d.answer}</div>
+          <div class="answer-content">${answerHtml}</div>
         </div>
       </div>
-    `).join('');
+    `}).join('');
   }
-  document.getElementById('statusText').textContent = `共 ${filtered.length} 条结果`;
 }
 
 function filterTag(tag) { activeTag = tag; renderTags(); renderCards(document.getElementById('searchInput').value); }
@@ -228,7 +417,7 @@ function switchMode(mode) {
 
 function saveEdits() {
   const text = document.getElementById('editArea').value;
-  localStorage.setItem('itp_data', text);
+  localStorage.setItem('ivey_data', text);
   qaData = parseQA(text);
   switchMode('search');
   renderTags();
@@ -239,13 +428,13 @@ function resetEdits() { if(confirm('确定重置为初始数据吗？')) { docum
 
 document.getElementById('searchInput').addEventListener('input', (e) => renderCards(e.target.value));
 
-// Init
 (function() {
-  const saved = localStorage.getItem('itp_data');
+  const saved = localStorage.getItem('ivey_data');
   qaData = parseQA(saved || RAW);
   renderTags();
   renderCards();
 })();
 </script>
+
 </body>
 </html>
