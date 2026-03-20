@@ -5,238 +5,265 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Ivey MScDM Interview Prep</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
-  :root { --bg:#0a0a0b;--surface:#141416;--surface2:#1c1c20;--border:#2a2a30;--text:#e8e8ec;--dim:#8888a0;--accent:#6ee7b7;--accent-dim:#6ee7b720;--red:#ff6b6b; }
-  *{margin:0;padding:0;box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-  body{font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
-  .bottom-bar{padding:10px 16px;background:var(--surface);border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0}
-  .search-wrap{flex:1;position:relative}
-  .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--dim)}
-  #searchInput{width:100%;padding:10px 12px 10px 38px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:15px;outline:none;transition:border-color .2s}
-  #searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-  .mode-toggle{display:flex;gap:4px;background:var(--surface2);border-radius:8px;padding:3px;border:1px solid var(--border)}
-  .mode-btn{padding:7px 14px;border:none;background:transparent;color:var(--dim);font-family:inherit;font-size:13px;font-weight:500;border-radius:6px;cursor:pointer;transition:all .2s}
-  .mode-btn.active{background:var(--accent);color:var(--bg)}
-  .tag-bar{padding:8px 16px;background:var(--surface);border-top:1px solid var(--border);display:flex;gap:6px;overflow-x:auto;white-space:nowrap;flex-shrink:0}
-  .tag-bar::-webkit-scrollbar{display:none}
-  .tag-chip{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0}
-  .tag-chip.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
-  .content{flex:1;overflow-y:auto;padding:12px 16px;scroll-behavior:smooth}
-  .qa-card{margin-bottom:8px;border-radius:10px;border:1px solid var(--border);background:var(--surface);overflow:hidden}
-  .qa-card.open{border-color:var(--accent)}
-  .qa-question{padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px}
-  .q-badge{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center}
-  .q-label{flex:1;font-weight:500;font-size:14px;line-height:1.4}
-  .q-tag{flex-shrink:0;padding:2px 6px;border-radius:4px;background:var(--surface2);color:var(--dim);font-size:10px}
-  .qa-answer{display:none;overflow:hidden}
-  .qa-card.open .qa-answer{display:block}
-  .answer-content{padding:12px 16px 16px;font-size:15px;line-height:1.7;color:var(--text);border-top:1px solid var(--border);font-weight:300}
-  .answer-content p{margin:0 0 12px 0}
-  .followup{color:var(--accent);font-size:13px;font-weight:500;background:var(--accent-dim);padding:8px 12px;border-radius:6px;margin:12px 0 8px 0}
-  .edit-panel{display:none;flex:1;flex-direction:column;background:var(--bg)}
-  .edit-panel.active{display:flex}
-  .kw{color:var(--red);font-weight:600}
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root{--bg:#0a0a0b;--surface:#141416;--surface2:#1c1c20;--border:#2a2a30;--text:#e8e8ec;--dim:#8888a0;--accent:#6ee7b7;--accent-dim:#6ee7b720;--red:#ff6b6b}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+.bottom-bar{padding:10px 16px;background:var(--surface);border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-shrink:0}
+.search-wrap{flex:1;position:relative}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--dim)}
+#si{width:100%;padding:10px 12px 10px 38px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:15px;outline:none}
+#si:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.tb{padding:8px 16px;background:var(--surface);border-top:1px solid var(--border);display:flex;gap:6px;overflow-x:auto;white-space:nowrap;flex-shrink:0}
+.tb::-webkit-scrollbar{display:none}
+.tc{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0}
+.tc.on{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.ct{flex:1;overflow-y:auto;padding:12px 16px;scroll-behavior:smooth}
+.cd{margin-bottom:8px;border-radius:10px;border:1px solid var(--border);background:var(--surface);overflow:hidden}
+.cd.open{border-color:var(--accent)}
+.cq{padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px}
+.cb{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.cl{flex:1;font-weight:500;font-size:14px;line-height:1.4}
+.cg{flex-shrink:0;padding:2px 6px;border-radius:4px;background:var(--surface2);color:var(--dim);font-size:10px}
+.ca{display:none;overflow:hidden}
+.cd.open .ca{display:block}
+.ac{padding:12px 16px 16px;font-size:15px;line-height:1.7;color:var(--text);border-top:1px solid var(--border);font-weight:300}
+.ac p{margin:0 0 12px 0}
+.fu{color:var(--accent);font-size:13px;font-weight:500;background:var(--accent-dim);padding:8px 12px;border-radius:6px;margin:12px 0 8px 0}
+.kw{color:var(--red);font-weight:600}
 </style>
 </head>
 <body>
-<div id="searchMode" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
-  <div class="content" id="qaContainer"></div>
+<div style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+<div class="ct" id="box"></div>
 </div>
-<div class="tag-bar" id="tagBar"></div>
+<div class="tb" id="tags"></div>
 <div class="bottom-bar">
-  <div class="search-wrap">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" id="searchInput" placeholder="搜索关键词..." autocomplete="off">
-  </div>
+<div class="search-wrap">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+<input type="text" id="si" placeholder="搜索关键词...">
+</div>
 </div>
 <script>
-const qaData=[
-{tag:"Why Ivey",q:'Why are you interested in the <span class="kw">Digital Management</span> <span class="kw">program</span> at Ivey? What <span class="kw">drew</span> you to this program?',a:[
-"I want to join the Digital Management program at Ivey because it fits exactly where I am right now.",
+var D=[];
+function addQ(tag,q,lines){D.push({tag:tag,q:q,a:lines});}
+
+addQ("Why Ivey",
+'Why are you interested in the <span class=kw>Digital Management</span> <span class=kw>program</span> at Ivey? What <span class=kw>drew</span> you to this program?',
+["I want to join the Digital Management program at Ivey because it fits exactly where I am right now.",
 "As co-founder and CPO of Look4Career, I led the product side for over a year. I made calls on what to build. I ran tests. I looked at data. And that part I'm good at.",
-"But I've started to feel a gap. When it comes to the bigger business picture — like managing a cross-functional team, thinking about strategy beyond just the product — I know I need more.",
+"But I've started to feel a gap. When it comes to the bigger business picture - like managing a cross-functional team, thinking about strategy beyond just the product - I know I need more.",
 "That's what brought me to Ivey. A few things stand out to me.",
 "First, the case method. I'm someone who learns by doing. I don't learn well by just reading a textbook. I learn by looking at real problems and figuring out what I'd do. So the case method is perfect for me.",
 "Second, the digital focus. My whole background is in tech and data. I built a platform. I've done data science work. So Digital Management feels like a natural fit. It connects what I already know with what I still need to learn.",
 "And third, the people. I've read about the class size at Ivey. It's small. That means I'll really get to know my classmates. And I believe the best learning happens when you're around people from different backgrounds who challenge how you think.",
-"So for me, Ivey MScDM is the right next step. It fills the gap between where I am and where I want to go."]},
+"So for me, Ivey MScDM is the right next step. It fills the gap between where I am and where I want to go."]);
 
-{tag:"Career Goals",q:'What are your <span class="kw">short-term</span> and <span class="kw">long-term</span> <span class="kw">career goals</span>? How do you see this program <span class="kw">helping</span> you?',a:[
-"In the short term, I want to grow from a product-focused person into a more complete business leader.",
+addQ("Career Goals",
+'What are your <span class=kw>short-term</span> and <span class=kw>long-term</span> <span class=kw>career goals</span>? How do you see this program <span class=kw>helping</span> you?',
+["In the short term, I want to grow from a product-focused person into a more complete business leader.",
 "Let me explain what I mean. At Look4Career, I was the CPO. I led the product side. I made calls on what to build, how to test, how to improve. And that part I'm confident in. We grew user engagement by 40% in the first year. So I know I can make good product decisions.",
-"But through that experience, I also found out what I'm missing. When I had to get different people aligned — developers, designers, my co-founder — I realized product thinking alone isn't enough. I need to understand how to lead more people. How to manage across different teams. How to think about the bigger business picture — not just the product.",
+"But through that experience, I also found out what I'm missing. When I had to get different people aligned - developers, designers, my co-founder - I realized product thinking alone isn't enough. I need to understand how to lead more people. How to manage across different teams. How to think about the bigger business picture - not just the product.",
 "That's exactly what I want to build in the short term through the MScDM. The case method will train me to think about business problems from every angle. The team projects will push me to practice leading in different settings. And the digital focus connects directly to my background in tech and data.",
-"I also want to use the program to explore different industries. At Look4Career, I only worked in one space — job platforms for young people. But I know the skills I've built — data thinking, product strategy, team leadership — can work in many fields. So I want to use the MScDM to see where else I can apply these skills. Maybe fintech. Maybe e-commerce. Maybe something I haven't thought of yet.",
-"In the long term, I see myself growing into a senior leadership role — someone who's responsible for overall business direction and strategic decisions. The MScDM is the step I need to get there.",
+"I also want to use the program to explore different industries. At Look4Career, I only worked in one space - job platforms for young people. But I know the skills I've built - data thinking, product strategy, team leadership - can work in many fields. So I want to use the MScDM to see where else I can apply these skills. Maybe fintech. Maybe e-commerce. Maybe something I haven't thought of yet.",
+"In the long term, I see myself growing into a senior leadership role - someone who's responsible for overall business direction and strategic decisions. The MScDM is the step I need to get there.",
 "So that's why I'm here. I know what I'm good at. I know what I need. And I believe Ivey can help me close that gap.",
-"⚡FOLLOWUP⚡追问 Plan B:",
-"That's a good question. If my first path doesn't work out, I'd go into product management or data strategy at a larger tech company. I already have the technical skills — I've done data science, A/B testing, product development. So I could bring that to a bigger company and learn how larger teams work. And honestly, even that path would benefit from what I learn at Ivey. Because leading a product team at a bigger company still needs strong management skills."]},
+"FOLLOWUP: Plan B",
+"That's a good question. If my first path doesn't work out, I'd go into product management or data strategy at a larger tech company. I already have the technical skills - I've done data science, A/B testing, product development. So I could bring that to a bigger company and learn how larger teams work. And honestly, even that path would benefit from what I learn at Ivey. Because leading a product team at a bigger company still needs strong management skills."]);
 
-{tag:"Business News",q:'How do you stay up to date with <span class="kw">business news</span>? Do you follow any <span class="kw">sources</span>, or listen to any <span class="kw">podcasts</span>? Share a <span class="kw">recent</span> piece of business news.',a:[
-"Sure. One thing I've been following recently is what's happening with AI.",
+addQ("Business News",
+'How do you stay up to date with <span class=kw>business news</span>? Do you follow any <span class=kw>sources</span>, or listen to any <span class=kw>podcasts</span>? Share a <span class=kw>recent</span> piece of business news.',
+["Sure. One thing I've been following recently is what's happening with AI.",
 "In the past few months, AI has been growing really fast. Companies like OpenAI and Google keep putting out new models. And it's not just about tech anymore. AI is changing how businesses work. How people find jobs. How companies make decisions.",
 "This matters to me because at Look4Career, I used AI tools and data models to improve our platform. So I pay close attention to where AI is going. Because I think in the next few years, every business will need to figure out how to use AI. And the ones who figure it out first will win.",
-"As for how I stay up to date — I mostly use YouTube. I follow a few channels that talk about tech and business news. I find it easy to keep up that way. I also read the Financial Times sometimes when I want to go deeper on a topic.",
-"And I listen to podcasts too. One I really like is \"How I Built This\" by Guy Raz. He talks to founders about how they started their companies. I find their stories really helpful.",
-"So yeah, I try to stay close to what's happening. Especially anything around AI and digital business. Because that's the world I want to work in."]},
+"As for how I stay up to date - I mostly use YouTube. I follow a few channels that talk about tech and business news. I find it easy to keep up that way. I also read the Financial Times sometimes when I want to go deeper on a topic.",
+"And I listen to podcasts too. One I really like is How I Built This by Guy Raz. He talks to founders about how they started their companies. I find their stories really helpful.",
+"So yeah, I try to stay close to what's happening. Especially anything around AI and digital business. Because that's the world I want to work in."]);
 
-{tag:"Leadership",q:'Tell me about a time when you were in a <span class="kw">leadership</span> role. What <span class="kw">challenges</span> did you face, and how did you <span class="kw">handle</span> them?',a:[
-"When I started Look4Career, I was leading a small team — a few developers and a designer. And at the beginning, it was hard. Because everyone had different ideas about what to build.",
+addQ("Leadership",
+'Tell me about a time when you were in a <span class=kw>leadership</span> role. What <span class=kw>challenges</span> did you face, and how did you <span class=kw>handle</span> them?',
+["When I started Look4Career, I was leading a small team - a few developers and a designer. And at the beginning, it was hard. Because everyone had different ideas about what to build.",
 "Some people wanted to copy the big job sites. They said that's the safe way. But I felt that was wrong. We're a small startup. There's no way we can beat the big players by doing the same thing.",
 "So I shared my thinking with the team. I said: let's focus on young job seekers. We're young too. We're the same age as them. We know what they need. And instead of a big, heavy site, let's make ours fast and clean.",
 "Not everyone was on board at first. So I ran an A/B test. I set up two versions. One was more like the big sites. One was the simple, fast version. After two weeks, the data was clear. Users on the simpler version stayed longer. They clicked more.",
 "Once the team saw that, everyone got on the same page. We moved forward together. And we ended up growing user engagement by 40% in the first year.",
 "What I learned is: as a leader, you can't just tell people what to do. You have to show them why. And if you can back up your thinking with real data, people will trust you.",
-"⚡FOLLOWUP⚡追问 How did your team react?",
-"At first, some people were not sure about my idea. One developer felt we should add more features, not take them away. I didn't push him. Instead, I said: let's test both and see what works. And when the data showed that the simpler version was better, he was actually the first one to say \"okay, let's go with this.\" I think that's because I didn't make it about who's right. I made it about what works. And that made things much easier."]},
+"FOLLOWUP: How did your team react?",
+"At first, some people were not sure about my idea. One developer felt we should add more features, not take them away. I didn't push him. Instead, I said: let's test both and see what works. And when the data showed that the simpler version was better, he was actually the first one to say okay, let's go with this. I think that's because I didn't make it about who's right. I made it about what works. And that made things much easier."]);
 
-{tag:"Personal",q:'Has there ever been a time when someone <span class="kw">misunderstood</span> something about you? What happened and how did you <span class="kw">deal</span> with it?',a:[
-"Yes. I think people sometimes see me as someone who doesn't care what others think. Because I'm very direct. And I move fast. When I have an idea, I want to go right away. I don't wait around.",
-"At Look4Career, I noticed that some team members thought I was not listening to them. Because I'd make a call quickly and just say \"let's do this.\" But that wasn't true. I did care about what they thought. I just didn't show it well.",
-"When I found out, I started to change. I began asking more questions before making a call. I'd say things like: \"Here's what I'm thinking. What do you guys see? Am I missing something?\" And once people saw that I actually wanted their input, things got much better.",
-"So the misunderstanding was that I don't care about others' views. The truth is I do care. A lot. I just needed to learn how to show it. And I think that's something I'm still working on — slowing down just enough so people know I'm hearing them."]},
+addQ("Personal",
+'Has there ever been a time when someone <span class=kw>misunderstood</span> something about you? What happened and how did you <span class=kw>deal</span> with it?',
+["Yes. I think people sometimes see me as someone who doesn't care what others think. Because I'm very direct. And I move fast. When I have an idea, I want to go right away. I don't wait around.",
+"At Look4Career, I noticed that some team members thought I was not listening to them. Because I'd make a call quickly and just say let's do this. But that wasn't true. I did care about what they thought. I just didn't show it well.",
+"When I found out, I started to change. I began asking more questions before making a call. I'd say things like: Here's what I'm thinking. What do you guys see? Am I missing something? And once people saw that I actually wanted their input, things got much better.",
+"So the misunderstanding was that I don't care about others' views. The truth is I do care. A lot. I just needed to learn how to show it. And I think that's something I'm still working on - slowing down just enough so people know I'm hearing them."]);
 
-{tag:"Feedback",q:'Tell me about a time when you <span class="kw">felt good</span> about something you did, but then you received <span class="kw">negative</span> or <span class="kw">constructive feedback</span>. How did you respond?',a:[
-"This happened at Look4Career. We had just finished a big update to the site. I was really proud of it. We made the design cleaner. We improved loading speed. And I thought users would love it.",
+addQ("Feedback",
+'Tell me about a time when you <span class=kw>felt good</span> about something you did, but then you received <span class=kw>negative</span> or <span class=kw>constructive feedback</span>. How did you respond?',
+["This happened at Look4Career. We had just finished a big update to the site. I was really proud of it. We made the design cleaner. We improved loading speed. And I thought users would love it.",
 "But then we got feedback from some of our users. A few of them said the new design was confusing. They couldn't find certain features anymore. I was surprised. Because I thought we made everything better.",
-"At first, I felt defensive. I wanted to say \"no, this is better, you'll get used to it.\" But I stopped myself. I looked at the data. And the numbers backed up what the users said. Some pages had lower click-through rates after the change.",
-"So I went back to the team and said: \"Okay, we need to fix this. The users are right.\" We kept the speed improvements. But we brought back some of the old layout so people could find things easier.",
-"What I learned is: just because you worked hard on something doesn't mean it's perfect. Feedback is a gift. Even when it hurts. Because it shows you what you can't see on your own."]},
+"At first, I felt defensive. I wanted to say no, this is better, you'll get used to it. But I stopped myself. I looked at the data. And the numbers backed up what the users said. Some pages had lower click-through rates after the change.",
+"So I went back to the team and said: Okay, we need to fix this. The users are right. We kept the speed improvements. But we brought back some of the old layout so people could find things easier.",
+"What I learned is: just because you worked hard on something doesn't mean it's perfect. Feedback is a gift. Even when it hurts. Because it shows you what you can't see on your own."]);
 
-{tag:"Behavioral",q:'Can you share a time when you came up with a <span class="kw">new idea</span> and had to <span class="kw">convince</span> others to get on board?',a:[
-"This happened when I was working as a Data Scientist Consultant at Mocha Tech Solutions.",
+addQ("Behavioral",
+'Can you share a time when you came up with a <span class=kw>new idea</span> and had to <span class=kw>convince</span> others to get on board?',
+["This happened when I was working as a Data Scientist Consultant at Mocha Tech Solutions.",
 "We had a client who needed a predictive model. The team's plan was to build the model from scratch. That's the normal way. Everyone was used to it.",
-"But I had a different idea. I suggested we use transfer learning instead. Basically, we take an existing model that's already been trained — like GPT-4.1 Mini — and fine-tune it for the client's specific needs. It would be faster. Cheaper. And in many cases, more accurate.",
-"At first, the team was not sure. They said: \"We've always built models from scratch. That's what the client expects. Why change it?\"",
+"But I had a different idea. I suggested we use transfer learning instead. Basically, we take an existing model that's already been trained - like GPT-4.1 Mini - and fine-tune it for the client's specific needs. It would be faster. Cheaper. And in many cases, more accurate.",
+"At first, the team was not sure. They said: We've always built models from scratch. That's what the client expects. Why change it?",
 "I understood their concern. So I didn't just push my opinion. I put together a small demo. I took one of our tasks, fine-tuned an existing model on it, and compared the results with the traditional approach. The fine-tuned version was faster to build and performed just as well.",
 "When the team saw the results, they started to come around. And I also explained the business side: if we can deliver faster, the client saves money, and we can take on more projects at the same time.",
 "In the end, the team agreed. We used the approach. And it worked. We improved the client's decision-making accuracy by 15% and cut delivery time by 20%.",
-"What I learned is: when you have a new idea, you can't just tell people it's better. You have to show them. A small proof goes a long way."]},
+"What I learned is: when you have a new idea, you can't just tell people it's better. You have to show them. A small proof goes a long way."]);
 
-{tag:"Behavioral",q:'Describe a situation where you had to make a <span class="kw">decision</span> with very <span class="kw">limited information</span>. What did you do?',a:[
-"This happened early on at Look4Career. We had just launched the platform. And we needed to decide who our main users would be. Should we go after everyone? Or pick a specific group?",
+addQ("Behavioral",
+'Describe a situation where you had to make a <span class=kw>decision</span> with very <span class=kw>limited information</span>. What did you do?',
+["This happened early on at Look4Career. We had just launched the platform. And we needed to decide who our main users would be. Should we go after everyone? Or pick a specific group?",
 "The problem was, we had very little data. We had just started. We didn't have enough users yet to really know who was coming to the site and why.",
 "But I couldn't wait. If we tried to serve everyone, we'd be just another job site. We'd lose.",
-"So I made a call based on what I knew. I'm young. My co-founders are young. We understand what young job seekers want — because we are them. So I said: let's focus on that group. Make the site for people like us.",
+"So I made a call based on what I knew. I'm young. My co-founders are young. We understand what young job seekers want - because we are them. So I said: let's focus on that group. Make the site for people like us.",
 "It wasn't based on a big data set. It was based on my gut feeling and my own experience. But right after that, I set up ways to test it. I watched the numbers. I talked to users. And the early results showed I was right. Young users were staying on the site. They liked it.",
-"So I learned that sometimes you don't have all the data. But you still need to move. Make the best call you can. And then test it right away. That's how you turn a guess into a real plan."]},
+"So I learned that sometimes you don't have all the data. But you still need to move. Make the best call you can. And then test it right away. That's how you turn a guess into a real plan."]);
 
-{tag:"Behavioral",q:'How do you push yourself out of your <span class="kw">comfort zone</span>? Can you give me a specific <span class="kw">example</span>?',a:[
-"The biggest time was starting Look4Career. Before that, I was just a student. I studied economics. I did some internships. I was good at school stuff. But I'd never built anything real.",
+addQ("Behavioral",
+'How do you push yourself out of your <span class=kw>comfort zone</span>? Can you give me a specific <span class=kw>example</span>?',
+["The biggest time was starting Look4Career. Before that, I was just a student. I studied economics. I did some internships. I was good at school stuff. But I'd never built anything real.",
 "When the idea for Look4Career came up, I was scared. I didn't know how to run a company. I didn't know how to lead a team. I didn't know if it would work.",
 "But I said yes anyway. And I figured it out as I went. I learned how to lead developers. How to make product calls. How to talk to users. How to read data and change direction when something wasn't working.",
 "None of that was comfortable. Every week, I was doing something I'd never done before. And there were times when I wanted to quit. Especially in the early days when nothing was growing.",
 "But I kept going. And slowly, things started working. Users came. Engagement grew. And I grew too. As a person. As a leader.",
-"So that's how I push myself. I say yes to things that scare me. And then I figure it out along the way. Because the biggest growth always happens outside the safe zone."]},
+"So that's how I push myself. I say yes to things that scare me. And then I figure it out along the way. Because the biggest growth always happens outside the safe zone."]);
 
-{tag:"Behavioral",q:'Tell me about a time when you had a <span class="kw">conflict</span> with someone — maybe a teammate or colleague. How did you <span class="kw">work through</span> it?',a:[
-"This happened during a group project in one of my economics courses at Windsor.",
+addQ("Behavioral",
+'Tell me about a time when you had a <span class=kw>conflict</span> with someone. How did you <span class=kw>work through</span> it?',
+["This happened during a group project in one of my economics courses at Windsor.",
 "We had a team of four people. We needed to write a research paper together. Early on, we had to pick a topic. I wanted to do something about digital platforms and market competition. I thought it was interesting and I had real experience with it from Look4Career.",
-"But one of my teammates wanted to do a completely different topic — something about trade policy. He felt very strongly about it. And he was quite vocal. He kept saying my idea was \"too narrow\" and \"not serious enough.\"",
+"But one of my teammates wanted to do a completely different topic - something about trade policy. He felt very strongly about it. And he was quite vocal. He kept saying my idea was too narrow and not serious enough.",
 "I felt frustrated. Not because he disagreed with me. But because of the way he said it. It felt like he was dismissing my idea without really listening.",
-"But I didn't fight back. Instead, I asked him: \"Okay, tell me more about why you think trade policy is the better choice.\" And I really listened. He made some fair points. His topic had more published data to work with. That was a real advantage for a research paper.",
-"Then I explained my side too. I said: \"I think digital platforms is more relevant to what we're learning. And I can bring real examples from my own experience.\"",
-"In the end, we found a middle ground. We combined the two ideas — we wrote about how digital platforms are affected by trade policy. It actually turned out to be a stronger topic than either of ours alone.",
-"What I learned is: when someone disagrees with you, the worst thing you can do is push harder. The better thing is to listen first. Understand where they're coming from. And then find a way to bring both sides together. That usually gives you a better answer than either person had alone."]},
+"But I didn't fight back. Instead, I asked him: Okay, tell me more about why you think trade policy is the better choice. And I really listened. He made some fair points. His topic had more published data to work with. That was a real advantage for a research paper.",
+"Then I explained my side too. I said: I think digital platforms is more relevant to what we're learning. And I can bring real examples from my own experience.",
+"In the end, we found a middle ground. We combined the two ideas - we wrote about how digital platforms are affected by trade policy. It actually turned out to be a stronger topic than either of ours alone.",
+"What I learned is: when someone disagrees with you, the worst thing you can do is push harder. The better thing is to listen first. Understand where they're coming from. And then find a way to bring both sides together. That usually gives you a better answer than either person had alone."]);
 
-{tag:"Behavioral",q:'Have you been in a situation where a <span class="kw">teammate</span> wasn\'t <span class="kw">pulling their weight</span> or wasn\'t <span class="kw">contributing</span>? What did you do?',a:[
-"Yes. At Look4Career, there was a time when one of our developers was not keeping up. He was missing deadlines. His work wasn't at the level it should be. And it was slowing the whole team down.",
-"My first reaction was frustration. I wanted to just say: \"Hey, you need to do better.\" But I stopped and thought about it. Maybe there's a reason.",
+addQ("Behavioral",
+'Have you been in a situation where a <span class=kw>teammate</span> wasn\'t <span class=kw>contributing</span>? What did you do?',
+["Yes. At Look4Career, there was a time when one of our developers was not keeping up. He was missing deadlines. His work wasn't at the level it should be. And it was slowing the whole team down.",
+"My first reaction was frustration. I wanted to just say: Hey, you need to do better. But I stopped and thought about it. Maybe there's a reason.",
 "So I talked to him one-on-one. I asked how he was doing. And it turned out he was stuck on a technical problem that he didn't know how to solve. But he was too embarrassed to ask for help.",
 "Once I knew that, I paired him with another developer who had more experience in that area. And I also made it clear to the whole team: it's okay to ask for help. That's not a weakness. That's how we get better together.",
 "After that, his work improved a lot. He started asking questions earlier. He hit his deadlines. And the team moved faster.",
-"What I learned is: when someone isn't contributing, the first step is to find out why. Don't just blame them. Understand the problem first. Then fix it together."]},
+"What I learned is: when someone isn't contributing, the first step is to find out why. Don't just blame them. Understand the problem first. Then fix it together."]);
 
-{tag:"Behavioral",q:'Can you walk me through a time when you had to completely <span class="kw">redo</span> a project or assignment? How did you <span class="kw">handle</span> that <span class="kw">mentally</span>?',a:[
-"This happened at Look4Career. Early on, we built the first version of our site based on what we thought users wanted. We spent weeks on it. A lot of time. A lot of work.",
+addQ("Behavioral",
+'Can you walk me through a time when you had to completely <span class=kw>redo</span> a project? How did you <span class=kw>handle</span> that <span class=kw>mentally</span>?',
+["This happened at Look4Career. Early on, we built the first version of our site based on what we thought users wanted. We spent weeks on it. A lot of time. A lot of work.",
 "But when we launched, the numbers were bad. Users weren't staying. They weren't coming back. I looked at the data and I had to face the truth: our approach was wrong. We had built too much. Too many features. Too confusing.",
-"Honestly, that was a hard moment. I felt like all that work was wasted. And there was a voice in my head saying: \"Maybe just keep going. Maybe it'll get better.\"",
+"Honestly, that was a hard moment. I felt like all that work was wasted. And there was a voice in my head saying: Maybe just keep going. Maybe it'll get better.",
 "But I knew deep down that we needed to start over. Not from zero. But we needed to change a lot.",
-"So I told the team: \"Look, I know this is hard. But the data is telling us something. We need to simplify. Focus on what matters. And rebuild.\"",
+"So I told the team: Look, I know this is hard. But the data is telling us something. We need to simplify. Focus on what matters. And rebuild.",
 "It wasn't easy. Some people were tired. But we did it. We stripped the site down. Made it faster. Cleaner. Focused on young job seekers. And this time, it worked. Engagement went up 40%.",
-"What I learned is: redoing something isn't failure. It's learning. The first version taught us what not to do. And without that, we never would've built the better version."]},
+"What I learned is: redoing something isn't failure. It's learning. The first version taught us what not to do. And without that, we never would've built the better version."]);
 
-{tag:"Behavioral",q:'What would you say has been the <span class="kw">biggest challenge</span> you\'ve faced so far in your life or career?',a:[
-"The biggest challenge was the early days of Look4Career. We had just launched. And nothing was happening. Users weren't coming. Growth was flat.",
+addQ("Behavioral",
+'What would you say has been the <span class=kw>biggest challenge</span> you\'ve faced so far?',
+["The biggest challenge was the early days of Look4Career. We had just launched. And nothing was happening. Users weren't coming. Growth was flat.",
 "I kept asking myself: did I make the wrong call? Should I just go find a normal job instead? That feeling was really hard. Because I had put so much time into this. And people around me were watching.",
 "But I didn't quit. I went back to the basics. I talked to users. I looked at the data. I ran small tests to see what worked. And slowly, I found the answer. We were trying to be too much. We needed to be simple. Focused. Fast.",
 "Once I made that change, things started moving. But the real challenge wasn't the product. It was the time before things got better. Sitting with doubt. Wondering if I was wrong. That's the hardest thing I've ever been through.",
-"And I think it made me stronger. Because now I know: when things are bad, you don't quit. You go back to the data. You test. You change. And you keep going."]},
+"And I think it made me stronger. Because now I know: when things are bad, you don't quit. You go back to the data. You test. You change. And you keep going."]);
 
-{tag:"Personal",q:'What do you consider your most significant <span class="kw">accomplishment</span> to date, and <span class="kw">why</span> does it matter to you?',a:[
-"I'd say it's building Look4Career from nothing to a real platform with real users.",
-"When we started, we had no users. No money. No name. Just an idea. And a lot of people said it wouldn't work. They said: \"Why would you go against the big job sites?\"",
+addQ("Personal",
+'What do you consider your most significant <span class=kw>accomplishment</span> to date, and <span class=kw>why</span> does it matter to you?',
+["I'd say it's building Look4Career from nothing to a real platform with real users.",
+"When we started, we had no users. No money. No name. Just an idea. And a lot of people said it wouldn't work.",
 "But I believed we had something different. We're young. We know what young job seekers want. So I led the product side. I made calls. I ran tests. I kept pushing the team to make things better.",
 "And in the first year, we grew user engagement by 40%. We got real users. We got funding. People started to take us seriously.",
-"But honestly, the number isn't what matters most to me. What matters is that I proved to myself: I can build something real. I can take an idea from nothing and make it work. That changed how I see myself. Before Look4Career, I wasn't sure I could do it. Now I know I can."]},
+"But honestly, the number isn't what matters most to me. What matters is that I proved to myself: I can build something real. I can take an idea from nothing and make it work. That changed how I see myself. Before Look4Career, I wasn't sure I could do it. Now I know I can."]);
 
-{tag:"Weaknesses",q:'What\'s the biggest <span class="kw">personality</span> trait or habit that <span class="kw">holds you back</span>, and what are you doing about it?',a:[
-"I'd say I trust my own thinking too quickly. When I feel like something is the right call, I want to go right away. And most of the time, it works out. But sometimes I move so fast that I leave people behind.",
-"At Look4Career, there were times when I made a decision and just told the team: \"This is what we're doing.\" I didn't ask how they felt. I didn't explain my thinking. And later, I found out some people had concerns from the start. But they didn't feel like there was space to say it.",
+addQ("Weaknesses",
+'What\'s the biggest <span class=kw>personality</span> trait or habit that <span class=kw>holds you back</span>?',
+["I'd say I trust my own thinking too quickly. When I feel like something is the right call, I want to go right away. And most of the time, it works out. But sometimes I move so fast that I leave people behind.",
+"At Look4Career, there were times when I made a decision and just told the team: This is what we're doing. I didn't ask how they felt. I didn't explain my thinking. And later, I found out some people had concerns from the start. But they didn't feel like there was space to say it.",
 "That was a big wake-up call for me. Because I realized: being fast doesn't help if the team isn't with you. A decision is only good if people actually follow it.",
-"So now, before I make a big call, I stop and ask: \"What do you think? Am I missing something?\" It's a small thing. But it's made a big difference. People feel more involved. And our decisions end up stronger.",
-"It's still something I work on every day. But I think knowing it is the first step."]},
+"So now, before I make a big call, I stop and ask: What do you think? Am I missing something? It's a small thing. But it's made a big difference. People feel more involved. And our decisions end up stronger.",
+"It's still something I work on every day. But I think knowing it is the first step."]);
 
-{tag:"Why Ivey",q:'If you join Ivey, what\'s your plan to get <span class="kw">involved</span> and really become part of the <span class="kw">community</span>?',a:[
-"I want to be an active part of the Ivey community. Not just show up to class.",
-"First, I want to bring my startup experience into the classroom. I know not everyone has built a company before. So I can share what I've learned — the good and the bad. That's useful in case discussions.",
+addQ("Why Ivey",
+'If you join Ivey, what\'s your plan to get <span class=kw>involved</span> and become part of the <span class=kw>community</span>?',
+["I want to be an active part of the Ivey community. Not just show up to class.",
+"First, I want to bring my startup experience into the classroom. I know not everyone has built a company before. So I can share what I've learned - the good and the bad. That's useful in case discussions.",
 "Second, I want to join clubs or groups that focus on tech and entrepreneurship. I want to meet people who are also building things. And learn from people who are different from me.",
-"And third, I want to help others. At my school right now, I'm a teaching assistant. I help students with economics. I like that. So at Ivey, I'd want to do something similar — help classmates, share what I know, and learn from them at the same time.",
-"I'm not the kind of person who just sits in the back. I like to get involved. And I think Ivey is the kind of place where that's encouraged."]},
+"And third, I want to help others. At my school right now, I'm a teaching assistant. I help students with economics. I like that. So at Ivey, I'd want to do something similar - help classmates, share what I know, and learn from them at the same time.",
+"I'm not the kind of person who just sits in the back. I like to get involved. And I think Ivey is the kind of place where that's encouraged."]);
 
-{tag:"Personal",q:'What do you think you can <span class="kw">bring</span> to Ivey and to your <span class="kw">classmates</span>?',a:[
-"I think I can bring three things.",
+addQ("Personal",
+'What do you think you can <span class=kw>bring</span> to Ivey and to your <span class=kw>classmates</span>?',
+["I think I can bring three things.",
 "First, real startup experience. I'm not just studying business. I actually built one. So when we talk about cases in class, I can connect it to what I've lived through. That makes discussions more real.",
 "Second, a different way of thinking. I'm a strategy-first person. I don't start with data. I start with asking: what are we really trying to do? And then I use data to check if I'm right. I think that way of thinking can add something to the group.",
 "And third, my background. I grew up in China and moved to Canada on my own. I've built my life here from nothing. That gives me a different view on things. I notice things that people who grew up here might not see. And I think that kind of view can make discussions richer.",
-"So I'm not just here to learn. I'm here to give back too."]},
+"So I'm not just here to learn. I'm here to give back too."]);
 
-{tag:"Why Ivey",q:'How has your <span class="kw">academic background</span> <span class="kw">prepared</span> you for studying <span class="kw">Digital Management</span>?',a:[
-"My background is in economics, with a minor in applied IT and math. So I've studied both the business side and the tech side.",
+addQ("Why Ivey",
+'How has your <span class=kw>academic background</span> <span class=kw>prepared</span> you for studying <span class=kw>Digital Management</span>?',
+["My background is in economics, with a minor in applied IT and math. So I've studied both the business side and the tech side.",
 "On the technical side, I've learned programming, data analysis, and statistics. I've done machine learning work. I even competed in a Kaggle deep learning competition and got a silver medal. So I can handle the data and analytics parts of the program.",
 "On the business side, my economics training taught me how to think about markets, decision-making, and how people behave. That's useful for understanding how digital businesses work.",
-"And on top of that, I built Look4Career. So I've seen how the academic stuff plays out in the real world. I've used A/B testing, data models, and product thinking — all in a real company.",
-"So I feel ready for the program. I have the technical skills. I have the business thinking. And I have the hands-on experience to tie it all together."]},
+"And on top of that, I built Look4Career. So I've seen how the academic stuff plays out in the real world. I've used A/B testing, data models, and product thinking - all in a real company.",
+"So I feel ready for the program. I have the technical skills. I have the business thinking. And I have the hands-on experience to tie it all together."]);
 
-{tag:"Career Goals",q:'Besides your first career choice, what would be your <span class="kw">plan B</span>? If that didn\'t work out, what would you do <span class="kw">instead</span>?',a:[
-"If my first path doesn't work out, I'd go into product management or data strategy at a bigger tech company.",
+addQ("Career Goals",
+'Besides your first career choice, what would be your <span class=kw>plan B</span>? What would you do <span class=kw>instead</span>?',
+["If my first path doesn't work out, I'd go into product management or data strategy at a bigger tech company.",
 "I already have the skills for it. I've done data science work. I've led product development. I've done A/B testing and worked with cross-functional teams.",
 "So I could step into a bigger company and learn how things work at a larger scale. How bigger teams operate. How larger organizations make decisions.",
-"And honestly, even that path would benefit from what I learn at Ivey. Because managing a product team at a big company still needs strong leadership and management skills. So either way, the MScDM makes me better."]},
+"And honestly, even that path would benefit from what I learn at Ivey. Because managing a product team at a big company still needs strong leadership and management skills. So either way, the MScDM makes me better."]);
 
-{tag:"Closing",q:'Do you have any <span class="kw">questions</span> for me — about the program, the school, anything at all?',a:[
-"Option A: \"What's one thing that students say they found most surprising or most valuable about the program after they finish?\"",
-"Option B: \"I'm really looking forward to being on campus at Ivey. Could you tell me a bit about the learning environment — like, do students often use the study spaces or library to work on cases together outside of class? I'd love to know what the day-to-day experience is like beyond the classroom.\""]}
-];
+addQ("Closing",
+'Do you have any <span class=kw>questions</span> for me - about the program, the school, anything at all?',
+["Option A: What's one thing that students say they found most surprising or most valuable about the program after they finish?",
+"Option B: I'm really looking forward to being on campus at Ivey. Could you tell me a bit about the learning environment - like, do students often use the study spaces or library to work on cases together outside of class? I'd love to know what the day-to-day experience is like beyond the classroom."]);
 
-let activeTag=null;
-function renderTags(){
-  const c=document.getElementById('tagBar');
-  const tags=[...new Set(qaData.map(d=>d.tag))];
-  c.innerHTML=`<button class="tag-chip ${!activeTag?'active':''}" onclick="filterTag(null)">全部 (${qaData.length})</button>`+tags.map(t=>`<button class="tag-chip ${activeTag===t?'active':''}" onclick="filterTag('${t}')">${t}</button>`).join('');
+var at=null;
+function rT(){
+var c=document.getElementById('tags');
+var ts=[];var m={};
+for(var i=0;i<D.length;i++){if(!m[D[i].tag]){m[D[i].tag]=1;ts.push(D[i].tag);}}
+var h='<button class="tc'+(at===null?' on':'')+'" onclick="fT(null)">All ('+D.length+')</button>';
+for(var i=0;i<ts.length;i++){h+='<button class="tc'+(at===ts[i]?' on':'')+'" onclick="fT(\''+ts[i]+'\')">'+ts[i]+'</button>';}
+c.innerHTML=h;
 }
-function renderCards(query=''){
-  const c=document.getElementById('qaContainer');
-  let f=activeTag?qaData.filter(d=>d.tag===activeTag):[...qaData];
-  if(query){
-    const terms=query.toLowerCase().split(/\s+/).filter(Boolean);
-    f=f.filter(d=>{
-      const txt=(d.q+' '+d.a.join(' ')+' '+d.tag).toLowerCase().replace(/<[^>]*>/g,'');
-      return terms.every(t=>txt.includes(t));
-    });
-  }
-  if(!f.length){c.innerHTML='<div style="text-align:center;padding:40px;color:var(--dim)">没有找到匹配内容</div>';return;}
-  c.innerHTML=f.map((d,i)=>{
-    const paragraphs=d.a.map(p=>{
-      if(p.startsWith('⚡FOLLOWUP⚡')) return `<div class="followup">${p.replace('⚡FOLLOWUP⚡','⚡ ')}</div>`;
-      return `<p>${p}</p>`;
-    }).join('');
-    return `<div class="qa-card" onclick="this.classList.toggle('open')"><div class="qa-question"><div class="q-badge">${i+1}</div><div class="q-label">${d.q}</div><div class="q-tag">${d.tag}</div></div><div class="qa-answer"><div class="answer-content">${paragraphs}</div></div></div>`;
-  }).join('');
+function rC(q){
+var c=document.getElementById('box');
+var f=[];
+for(var i=0;i<D.length;i++){
+if(at!==null&&D[i].tag!==at)continue;
+if(q){
+var txt=(D[i].q+' '+D[i].a.join(' ')+' '+D[i].tag).toLowerCase().replace(/<[^>]*>/g,'');
+if(txt.indexOf(q.toLowerCase())===-1)continue;
 }
-function filterTag(t){activeTag=t;renderTags();renderCards(document.getElementById('searchInput').value);}
-document.getElementById('searchInput').addEventListener('input',e=>renderCards(e.target.value));
-renderTags();renderCards();
+f.push(D[i]);
+}
+if(f.length===0){c.innerHTML='<div style="text-align:center;padding:40px;color:var(--dim)">No results</div>';return;}
+var h='';
+for(var i=0;i<f.length;i++){
+var ps='';
+for(var j=0;j<f[i].a.length;j++){
+var line=f[i].a[j];
+if(line.indexOf('FOLLOWUP:')===0){
+ps+='<div class="fu">'+line+'</div>';
+}else{
+ps+='<p>'+line+'</p>';
+}
+}
+h+='<div class="cd" onclick="this.classList.toggle(\'open\')"><div class="cq"><div class="cb">'+(i+1)+'</div><div class="cl">'+f[i].q+'</div><div class="cg">'+f[i].tag+'</div></div><div class="ca"><div class="ac">'+ps+'</div></div></div>';
+}
+c.innerHTML=h;
+}
+function fT(t){at=t;rT();rC(document.getElementById('si').value);}
+document.getElementById('si').addEventListener('input',function(e){rC(e.target.value);});
+rT();rC('');
 </script>
 </body>
 </html>
