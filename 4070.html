@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LA-AIDS Calculation Verification | ECON 4070</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Georgia',serif;background:#FDF8F0;color:#1A1A1A;line-height:1.6}
+.header{background:#1B4332;color:#fff;padding:2rem;text-align:center}
+.header h1{font-size:1.8rem;margin-bottom:0.5rem}
+.header p{color:#74C69D;font-size:0.95rem}
+.container{max-width:900px;margin:0 auto;padding:1.5rem}
+h2{color:#1B4332;font-size:1.4rem;margin:2rem 0 1rem;padding-bottom:0.5rem;border-bottom:3px solid #D4962A}
+h3{color:#2D6A4F;font-size:1.1rem;margin:1.5rem 0 0.8rem}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.9rem}
+th{background:#1B4332;color:#fff;padding:10px 12px;text-align:center;font-weight:bold}
+td{padding:8px 12px;border:1px solid #D1D1D1;text-align:center;font-family:'Consolas',monospace}
+tr:nth-child(even){background:#f5f5f0}
+.highlight{background:#FEF3C7!important;font-weight:bold;color:#C44536}
+.card{background:#fff;border-left:4px solid #2D6A4F;padding:1.2rem;margin:1rem 0;box-shadow:0 2px 6px rgba(0,0,0,0.08);border-radius:4px}
+.card.gold{border-left-color:#D4962A}
+.card.red{border-left-color:#C44536}
+.formula{background:#1B4332;color:#74C69D;padding:1rem;font-family:'Consolas',monospace;font-size:1.1rem;text-align:center;margin:1rem 0;border-radius:4px}
+.result{font-size:2rem;font-weight:bold;color:#C44536;text-align:center;margin:1rem 0}
+.step{background:#fff;padding:0.8rem 1.2rem;margin:0.5rem 0;border-left:3px solid #40916C;font-family:'Consolas',monospace;font-size:0.95rem}
+.note{color:#6B6B6B;font-style:italic;font-size:0.85rem;margin:0.5rem 0}
+.footer{background:#1B4332;color:#D8F3DC;text-align:center;padding:1.5rem;margin-top:3rem;font-size:0.85rem}
+.badge{display:inline-block;background:#D4962A;color:#fff;padding:2px 10px;border-radius:12px;font-size:0.8rem;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>LA-AIDS Calculation Verification</h1>
+<p>ECON 4070 | Yaonan Liu | University of Windsor | Professor Steven Chen</p>
+</div>
+
+<div class="container">
+
+<!-- SECTION 1: CORRELATION MATRIX -->
+
+<h2>1. Price Correlation Matrix <span class="badge">Slide 35</span></h2>
+
+<div class="card">
+<p>We claim that price correlations range from <strong>0.92–0.96</strong> across food groups, causing multicollinearity. Below is the full correlation matrix computed from our 27 panel observations (log prices).</p>
+</div>
+
+<h3>Correlation Matrix (ln prices, N = 27)</h3>
+<table>
+<tr><th></th><th>Meat</th><th>Dairy & Eggs</th><th>Cereals & Staples</th><th>Fruits & Veg</th></tr>
+<tr><td><strong>Meat</strong></td><td>1.0000</td><td>0.3824</td><td>0.5081</td><td>0.3472</td></tr>
+<tr><td><strong>Dairy & Eggs</strong></td><td>0.3824</td><td>1.0000</td><td class="highlight">0.9420</td><td class="highlight">0.9171</td></tr>
+<tr><td><strong>Cereals & Staples</strong></td><td>0.5081</td><td class="highlight">0.9420</td><td>1.0000</td><td class="highlight">0.9575</td></tr>
+<tr><td><strong>Fruits & Veg</strong></td><td>0.3472</td><td class="highlight">0.9171</td><td class="highlight">0.9575</td><td>1.0000</td></tr>
+</table>
+
+<p class="note">Yellow highlighted cells = correlations > 0.90 (evidence of multicollinearity).</p>
+
+<div class="card gold">
+<h3>Key Finding</h3>
+<p>The high correlations are among <strong>Dairy, Cereals, and Fruits & Veg</strong>:</p>
+<ul style="margin:0.5rem 0 0 1.5rem">
+<li>Dairy–Cereals: <strong>0.9420</strong></li>
+<li>Dairy–FruitVeg: <strong>0.9171</strong></li>
+<li>Cereals–FruitVeg: <strong>0.9575</strong></li>
+</ul>
+<p style="margin-top:0.5rem">This confirms the <strong>0.92–0.96 range</strong> stated in our presentation. All three pairs rose together during 2019–2023, making it statistically difficult to isolate individual price effects for these groups.</p>
+<p style="margin-top:0.5rem">Meat has <strong>lower correlations</strong> with other groups (0.35–0.51), which is why our Meat elasticity estimates are more reliable.</p>
+</div>
+
+<h3>Method</h3>
+<p>Pearson correlation coefficients computed from the natural log of group prices (ln p₁, ln p₂, ln p₃, ln p₄) across all 27 province-year observations. Data source: Statistics Canada Table 18-10-0245-01, processed into annual group averages.</p>
+
+<!-- SECTION 2: CROSS-PRICE ELASTICITY -->
+
+<h2>2. Cross-Price Elasticity η₁₄ = +1.22 <span class="badge">Slide 36</span></h2>
+
+<div class="card red">
+<p>This is our central finding: when Fruit & Vegetable prices rise by 10%, Meat demand increases by 12.2%. Below is the complete step-by-step calculation.</p>
+</div>
+
+<div class="formula">ηᵢⱼ = (γᵢⱼ − βᵢ · w̄ⱼ) / w̄ᵢ</div>
+
+<h3>Input Parameters</h3>
+<table>
+<tr><th>Parameter</th><th>Symbol</th><th>Value</th><th>Source</th></tr>
+<tr><td>F&V price coefficient in Meat equation</td><td>γ₁₄</td><td>0.322095</td><td>OLS regression output (p < 0.01)</td></tr>
+<tr><td>Expenditure coefficient, Meat equation</td><td>β₁</td><td>0.009222</td><td>OLS regression output</td></tr>
+<tr><td>Mean Meat budget share</td><td>w̄₁</td><td>0.2618</td><td>Panel mean (27 observations)</td></tr>
+<tr><td>Mean F&V budget share</td><td>w̄₄</td><td>0.3214</td><td>Panel mean (27 observations)</td></tr>
+</table>
+
+<h3>Step-by-Step Calculation</h3>
+<div class="step"><strong>Step 1:</strong> β₁ × w̄₄ = 0.009222 × 0.3214 = 0.002964</div>
+<div class="step"><strong>Step 2:</strong> γ₁₄ − β₁·w̄₄ = 0.322095 − 0.002964 = 0.319131</div>
+<div class="step"><strong>Step 3:</strong> η₁₄ = 0.319131 / 0.2618 = 1.2189</div>
+
+<div class="result">η₁₄ = +1.22</div>
+<p style="text-align:center;color:#6B6B6B">(rounded to 2 decimal places)</p>
+
+<div class="card">
+<h3>Interpretation</h3>
+<p>When Fruit & Vegetable prices rise by <strong>10%</strong>, Meat demand increases by <strong>12.2%</strong>.</p>
+<p style="margin-top:0.5rem">The positive sign (+) confirms these groups are <strong>substitutes</strong>, not complements. This is the strongest cross-category substitution effect in our 4×4 elasticity matrix, and directly answers our research question.</p>
+</div>
+
+<!-- SECTION 3: RAW DATA -->
+
+<h2>3. Raw Log Price Data (27 Observations)</h2>
+
+<p>Below are the natural log prices used for the correlation calculation above.</p>
+
+<table>
+<tr><th>Province</th><th>Year</th><th>ln(p_Meat)</th><th>ln(p_Dairy)</th><th>ln(p_Cereals)</th><th>ln(p_F&V)</th></tr>
+<tr><td>Ontario</td><td>2019</td><td>2.3243</td><td>1.3950</td><td>1.5454</td><td>1.4267</td></tr>
+<tr><td>Ontario</td><td>2021</td><td>2.3965</td><td>1.5151</td><td>1.6668</td><td>1.4827</td></tr>
+<tr><td>Ontario</td><td>2023</td><td>2.5189</td><td>1.6974</td><td>1.8066</td><td>1.6094</td></tr>
+<tr><td>Quebec</td><td>2019</td><td>2.4096</td><td>1.6114</td><td>1.7457</td><td>1.5529</td></tr>
+<tr><td>Quebec</td><td>2021</td><td>2.4217</td><td>1.6910</td><td>1.8091</td><td>1.6322</td></tr>
+<tr><td>Quebec</td><td>2023</td><td>2.5487</td><td>1.7596</td><td>1.9615</td><td>1.7147</td></tr>
+<tr><td>British Columbia</td><td>2019</td><td>2.4047</td><td>1.4895</td><td>1.6649</td><td>1.5085</td></tr>
+<tr><td>British Columbia</td><td>2021</td><td>2.5043</td><td>1.5697</td><td>1.7527</td><td>1.5282</td></tr>
+<tr><td>British Columbia</td><td>2023</td><td>2.6430</td><td>1.7237</td><td>1.9132</td><td>1.7038</td></tr>
+<tr><td>Alberta</td><td>2019</td><td>2.4199</td><td>1.4422</td><td>1.6458</td><td>1.5228</td></tr>
+<tr><td>Alberta</td><td>2021</td><td>2.4982</td><td>1.5140</td><td>1.7281</td><td>1.5602</td></tr>
+<tr><td>Alberta</td><td>2023</td><td>2.6185</td><td>1.6855</td><td>1.8916</td><td>1.6892</td></tr>
+<tr><td>Saskatchewan</td><td>2019</td><td>2.3355</td><td>1.4146</td><td>1.5974</td><td>1.5206</td></tr>
+<tr><td>Saskatchewan</td><td>2021</td><td>2.4402</td><td>1.4873</td><td>1.6686</td><td>1.5315</td></tr>
+<tr><td>Saskatchewan</td><td>2023</td><td>2.5494</td><td>1.6243</td><td>1.8602</td><td>1.6743</td></tr>
+<tr><td>Manitoba</td><td>2019</td><td>2.3485</td><td>1.3838</td><td>1.5507</td><td>1.4702</td></tr>
+<tr><td>Manitoba</td><td>2021</td><td>2.4562</td><td>1.4609</td><td>1.6233</td><td>1.5129</td></tr>
+<tr><td>Manitoba</td><td>2023</td><td>2.5749</td><td>1.6194</td><td>1.8429</td><td>1.6582</td></tr>
+<tr><td>Nova Scotia</td><td>2019</td><td>2.2737</td><td>1.5271</td><td>1.7817</td><td>1.6477</td></tr>
+<tr><td>Nova Scotia</td><td>2021</td><td>2.3580</td><td>1.6322</td><td>1.8563</td><td>1.7237</td></tr>
+<tr><td>Nova Scotia</td><td>2023</td><td>2.5149</td><td>1.7758</td><td>1.9988</td><td>1.8148</td></tr>
+<tr><td>New Brunswick</td><td>2019</td><td>2.2885</td><td>1.6630</td><td>1.8017</td><td>1.6458</td></tr>
+<tr><td>New Brunswick</td><td>2021</td><td>2.3528</td><td>1.7448</td><td>1.8664</td><td>1.7387</td></tr>
+<tr><td>New Brunswick</td><td>2023</td><td>2.5031</td><td>1.8594</td><td>2.0129</td><td>1.8262</td></tr>
+<tr><td>Prince Edward Island</td><td>2019</td><td>2.2814</td><td>1.6929</td><td>1.7800</td><td>1.6312</td></tr>
+<tr><td>Prince Edward Island</td><td>2021</td><td>2.3660</td><td>1.7766</td><td>1.8563</td><td>1.7334</td></tr>
+<tr><td>Prince Edward Island</td><td>2023</td><td>2.5201</td><td>1.9169</td><td>2.0035</td><td>1.8358</td></tr>
+</table>
+
+<p class="note">Source: Statistics Canada Table 18-10-0245-01. Monthly retail prices averaged to annual, then combined into 2-product group averages, then log-transformed.</p>
+
+</div>
+
+<div class="footer">
+<p>ECON 4070 — Understanding Canada's Food Price Inflation Through the Lens of Demand Elasticity</p>
+<p>Yaonan Liu | University of Windsor | Professor Steven Chen | 2024–2025</p>
+</div>
+
+</body>
+</html>
