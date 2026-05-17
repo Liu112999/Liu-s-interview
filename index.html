@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="300">
+<title>OMI China Coal-Plant SO2 — Live Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-900: #1e3a8a; --blue-800: #1e40af; --blue-600: #2563eb; --blue-100: #dbeafe;
+    --red-700: #b91c1c; --red-100: #fee2e2; --red-50: #fef2f2;
+    --gray-900: #0f172a; --gray-700: #334155; --gray-500: #64748b;
+    --gray-300: #cbd5e1; --gray-100: #f1f5f9; --gray-50: #f8fafc;
+    --green-700: #15803d; --green-100: #d1fae5;
+    --amber-50: #fffbeb; --amber-100: #fef3c7; --amber-700: #b45309;
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--gray-50); color: var(--gray-900);
+    min-height: 100vh; line-height: 1.6;
+  }
+  .container { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+    color: white; padding: 56px 24px 64px;
+    position: relative; overflow: hidden;
+  }
+  header::before {
+    content: ""; position: absolute; top: 0; right: 0; width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  header .inner { max-width: 1320px; margin: 0 auto; position: relative; z-index: 1; }
+  header .eyebrow {
+    display: inline-block; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    font-weight: 700; padding: 4px 12px; background: rgba(255,255,255,0.15);
+    border-radius: 100px; margin-bottom: 16px; backdrop-filter: blur(10px);
+  }
+  header h1 { font-size: 38px; font-weight: 800; margin-bottom: 12px; letter-spacing: -1px; line-height: 1.2; }
+  header h1 sub { font-size: 22px; vertical-align: baseline; }
+  header .sub { font-size: 16px; opacity: 0.9; max-width: 760px; line-height: 1.6; }
+  header .meta {
+    display: flex; gap: 32px; margin-top: 24px; font-size: 13px; opacity: 0.85;
+    flex-wrap: wrap; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15);
+  }
+  header .meta span { display: flex; align-items: center; gap: 8px; }
+  header .meta .dot { width: 8px; height: 8px; border-radius: 50%; background: #60a5fa; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; margin: -32px auto 32px; max-width: 1320px; padding: 0 24px; position: relative; z-index: 2; }
+  .kpi {
+    background: white; padding: 20px 24px; border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(15,23,42,0.06), 0 0 0 1px rgba(15,23,42,0.04);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .kpi:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,23,42,0.08); }
+  .kpi .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); font-weight: 700; margin-bottom: 8px; }
+  .kpi .value { font-size: 30px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.5px; line-height: 1.1; }
+  .kpi .sub { font-size: 12px; color: var(--gray-500); margin-top: 8px; }
+
+  .section {
+    background: white; padding: 32px; border-radius: 14px; margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.05), 0 0 0 1px rgba(15,23,42,0.03);
+  }
+  .section h2 {
+    font-size: 22px; font-weight: 700; color: var(--gray-900);
+    margin-bottom: 6px; display: flex; align-items: center; gap: 12px;
+  }
+  .section h2::before {
+    content: ""; width: 4px; height: 24px; background: var(--blue-600); border-radius: 2px;
+  }
+  .section .desc { color: var(--gray-500); font-size: 14px; margin-bottom: 24px; line-height: 1.7; }
+
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+  thead tr { background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%); color: white; }
+  thead th {
+    padding: 14px 16px; text-align: left; font-weight: 600; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  thead th:first-child { border-radius: 8px 0 0 0; }
+  thead th:last-child { border-radius: 0 8px 0 0; }
+  tbody tr { border-bottom: 1px solid var(--gray-100); transition: background 0.15s; }
+  tbody tr:hover { background: var(--gray-50); }
+  tbody td { padding: 11px 16px; font-variant-numeric: tabular-nums; }
+  tbody tr:nth-child(even) { background: rgba(248,250,252,0.5); }
+  tbody tr:nth-child(even):hover { background: var(--gray-50); }
+
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 100px;
+    font-size: 10.5px; font-weight: 700; margin-left: 8px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge-ets { background: var(--red-100); color: var(--red-700); }
+  .badge-ctrl { background: var(--gray-100); color: var(--gray-700); }
+  .text-red { color: var(--red-700); font-weight: 700; }
+  .text-gray { color: var(--gray-500); }
+
+  img.chart { max-width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--gray-100); display: block; }
+
+  .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  @media (max-width: 900px) { .twocol { grid-template-columns: 1fr; } }
+
+  .downloads { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 12px; margin-top: 16px; }
+  .dl-card {
+    background: var(--gray-50); border: 1px solid var(--gray-300); border-radius: 10px;
+    padding: 16px 20px; text-decoration: none; color: inherit;
+    transition: border-color 0.15s, background 0.15s;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .dl-card:hover { border-color: var(--blue-600); background: white; }
+  .dl-card .icon { font-size: 28px; }
+  .dl-card .label { font-weight: 700; color: var(--gray-900); font-size: 14px; }
+  .dl-card .size { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+
+  .explainer {
+    background: var(--blue-100); border-left: 4px solid var(--blue-600);
+    padding: 18px 22px; border-radius: 8px; font-size: 14px; margin: 12px 0 20px; line-height: 1.7;
+  }
+  .explainer h3 { font-size: 14px; font-weight: 700; color: var(--blue-900); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .caveat {
+    background: var(--amber-50); border-left: 4px solid #f59e0b;
+    padding: 16px 20px; border-radius: 8px; font-size: 14px; color: var(--amber-700); margin: 20px 0;
+  }
+  .caveat strong { color: #92400e; }
+
+  footer { text-align: center; padding: 48px 24px; color: var(--gray-500); font-size: 13px; line-height: 1.8; }
+  footer a { color: var(--blue-600); text-decoration: none; font-weight: 500; }
+  footer a:hover { text-decoration: underline; }
+
+  .stats-inline { display: flex; gap: 28px; flex-wrap: wrap; margin: 16px 0 24px; }
+  .stats-inline .stat { display: flex; flex-direction: column; }
+  .stats-inline .stat .num { font-size: 22px; font-weight: 800; color: var(--gray-900); }
+  .stats-inline .stat .label { font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <span class="eyebrow">🛰 Satellite-Driven Research Pipeline</span>
+    <h1>OMI China Coal-Plant SO<sub>2</sub> Dashboard</h1>
+    <div class="sub">
+      Daily NASA Aura/OMI satellite-derived sulfur dioxide observations at 215 large Chinese coal-fired power plants —
+      automated replica of <strong>Steven (Ruoyu) Chen (2021)</strong> SSRN #3963306
+      "Evaluating Power Sector Emissions under China's Regional Carbon ETS Pilots: A View from Space".
+    </div>
+    <div class="meta">
+      <span><span class="dot"></span>Page rendered: 2026-05-17 12:31 UTC</span>
+      <span>📡 Latest data: <strong>2026-05-15</strong></span>
+      <span>🔄 Auto-refresh every 5 min</span>
+      <span>🤖 Pipeline updates daily at 02:30 (Windows Task Scheduler)</span>
+    </div>
+  </div>
+</header>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="label">Latest data date</div>
+    <div class="value">2026-05-15</div>
+    <div class="sub">NASA usually has 1-3 day publishing delay</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Total observed days</div>
+    <div class="value">2,690</div>
+    <div class="sub">Continuous since 2019-01-01</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Valid observations</div>
+    <div class="value">154,705</div>
+    <div class="sub">~27% satellite coverage (clouds filtered)</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Plants monitored</div>
+    <div class="value">215</div>
+    <div class="sub">61 ETS treated + 154 control</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Section 1: Geographic map -->
+  <div class="section">
+    <h2>🗺 Geographic Distribution of 215 Plants</h2>
+    <p class="desc">参照 Steven Chen (2021) Figure 1 设计：省份背景色 = ETS pilot 启动年份；圆圈大小 = 电厂容量。落在彩色省份里的电厂自动是 treated（61 plants），白色省份的是 control（154 plants）。Province polygons from DataV / Alibaba (审图号 GS(2024)0650)。</p>
+    <img class="chart" src="chart_china_map.png" alt="China map of plants">
+
+    <div style="margin-top:18px; padding:18px 22px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0;">
+      <div style="font-weight:700; color:#0f172a; margin-bottom:12px; font-size:14px;">图例说明 · Legend explanation</div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+
+        <!-- Left: ETS pilot color blocks -->
+        <div>
+          <div style="font-weight:600; color:#0f172a; margin-bottom:8px; font-size:13px;">ETS Pilot — 省份背景色</div>
+          <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:8px;"><span style="display:inline-block; width:24px; height:14px; background:#a8d5a0; border:1px solid #1a1a1a; vertical-align:middle;"></span></td>
+              <td style="padding:8px;"><strong>2013</strong></td>
+              <td style="padding:8px; color:#475569;">北京 · 天津 · 上海 · 广东（含深圳）</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:8px;"><span style="display:inline-block; width:24px; height:14px; background:#7eb8b0; border:1px solid #1a1a1a; vertical-align:middle;"></span></td>
+              <td style="padding:8px;"><strong>2014</strong></td>
+              <td style="padding:8px; color:#475569;">湖北 · 重庆</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:8px;"><span style="display:inline-block; width:24px; height:14px; background:#f0d77c; border:1px solid #1a1a1a; vertical-align:middle;"></span></td>
+              <td style="padding:8px;"><strong>2015</strong></td>
+              <td style="padding:8px; color:#475569;">内蒙古（自愿试点，存疑）</td>
+            </tr>
+            <tr>
+              <td style="padding:8px;"><span style="display:inline-block; width:24px; height:14px; background:#5b96c4; border:1px solid #1a1a1a; vertical-align:middle;"></span></td>
+              <td style="padding:8px;"><strong>2016</strong></td>
+              <td style="padding:8px; color:#475569;">福建</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Right: capacity buckets -->
+        <div>
+          <div style="font-weight:600; color:#0f172a; margin-bottom:8px; font-size:13px;">Coal-Fired Power Plant (MW) — 圆圈大小</div>
+          <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:8px; width:50px; text-align:center;">
+                <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background:rgba(92,99,112,0.30); border:1px solid #2a2f3a; vertical-align:middle;"></span>
+              </td>
+              <td style="padding:8px;"><strong>1,700 – 2,500 MW</strong></td>
+              <td style="padding:8px; color:#475569;">最小档</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:8px; text-align:center;">
+                <span style="display:inline-block; width:13px; height:13px; border-radius:50%; background:rgba(92,99,112,0.30); border:1px solid #2a2f3a; vertical-align:middle;"></span>
+              </td>
+              <td style="padding:8px;"><strong>2,500 – 3,500 MW</strong></td>
+              <td style="padding:8px; color:#475569;">中小档（样本中最多）</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9;">
+              <td style="padding:8px; text-align:center;">
+                <span style="display:inline-block; width:19px; height:19px; border-radius:50%; background:rgba(92,99,112,0.30); border:1px solid #2a2f3a; vertical-align:middle;"></span>
+              </td>
+              <td style="padding:8px;"><strong>3,500 – 5,000 MW</strong></td>
+              <td style="padding:8px; color:#475569;">大档</td>
+            </tr>
+            <tr>
+              <td style="padding:8px; text-align:center;">
+                <span style="display:inline-block; width:27px; height:27px; border-radius:50%; background:rgba(92,99,112,0.30); border:1px solid #2a2f3a; vertical-align:middle;"></span>
+              </td>
+              <td style="padding:8px;"><strong>5,000 – 7,100 MW</strong></td>
+              <td style="padding:8px; color:#475569;">最大档</td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+
+      <p style="margin:16px 0 0; color:#475569; font-size:12px; line-height:1.7;">
+        <strong>为什么这样编码（参照 Steven Chen 2021）：</strong> 所有电厂统一灰色，treatment 状态通过它落在哪个色块判断——彩色省份内的电厂 = ETS treated（共 61 家）；白色省份内 = control（154 家）。这样视觉信息更干净，符合论文图惯例。<br>
+        <strong>圆圈半径比例：</strong> 4 档严格按 ~0.7 倍递减（最小 ≈ 中小×0.7, 中小 ≈ 大×0.7, 大 ≈ 最大×0.7），重叠时大圆不会完全吞掉小圆。<br>
+        <strong>2015 内蒙古：</strong> 内蒙古自愿试点（20 plants）在本项目里算 treated，但启动年份与官方 7 大试点不同，所以用第 4 个颜色单独标出——这正是项目里"内蒙古 voluntary 7"那个待澄清的 question 1。
+      </p>
+    </div>
+  </div>
+
+  <!-- Section 2: Daily SO2 chart -->
+  <div class="section">
+    <h2>📈 Daily SO<sub>2</sub> Trend (Last 60 Days)</h2>
+    <p class="desc">Daily mean SO<sub>2</sub> column averaged across plants in each group. X-axis is calendar date. Gaps indicate days where all NASA observations were filtered out (cloud cover or quality flags).</p>
+    <img class="chart" src="chart_daily_last60days.png" alt="Daily SO2">
+  </div>
+
+  <!-- Section 3: 30-day daily table -->
+  <div class="section">
+    <h2>📅 Last 30 Days — Daily NASA Readings</h2>
+    <p class="desc">One row per day. "Valid plants" = number of plants where NASA produced a measurement that day (varies with cloud coverage). "Top plant" = highest SO<sub>2</sub> reading on that date.</p>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Valid plants</th><th>Mean SO<sub>2</sub> (DU)</th><th>Top plant of day</th><th>Top SO<sub>2</sub></th></tr>
+      </thead>
+      <tbody><tr><td><strong>2026-05-15</strong></td><td>6</td><td>+0.141</td><td>Guixi power station <small style="color:#94a3b8;">(Jiangxi)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.750</strong></td></tr><tr><td><strong>2026-05-14</strong></td><td>41</td><td>-0.032</td><td>Tongliao power station <small style="color:#94a3b8;">(Inner Mongolia)</small> <span class="badge badge-ets">ETS</span></td><td><strong>0.395</strong></td></tr><tr><td><strong>2026-05-13</strong></td><td>19</td><td>+0.031</td><td>Weihai power station <small style="color:#94a3b8;">(Shandong)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.654</strong></td></tr><tr><td><strong>2026-05-12</strong></td><td>70</td><td>+0.106</td><td>Leizhou power station <small style="color:#94a3b8;">(Guangdong)</small> <span class="badge badge-ets">ETS</span></td><td><strong>0.685</strong></td></tr><tr><td><strong>2026-05-11</strong></td><td>71</td><td>-0.048</td><td>Rizhao power station <small style="color:#94a3b8;">(Shandong)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>1.180</strong></td></tr><tr><td><strong>2026-05-10</strong></td><td>46</td><td>+0.149</td><td>Changzhi power station <small style="color:#94a3b8;">(Shanxi)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.810</strong></td></tr><tr><td><strong>2026-05-09</strong></td><td>121</td><td>+0.170</td><td>Huadian Xiangyang power station <small style="color:#94a3b8;">(Hubei)</small> <span class="badge badge-ets">ETS</span></td><td><strong>1.370</strong></td></tr><tr><td><strong>2026-05-08</strong></td><td>33</td><td>+0.109</td><td>Lusigang power station <small style="color:#94a3b8;">(Jiangsu)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.860</strong></td></tr><tr><td><strong>2026-05-07</strong></td><td>21</td><td>+0.175</td><td>Tianchi Changji cogen power station <small style="color:#94a3b8;">(Xinjiang)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>1.040</strong></td></tr><tr><td><strong>2026-05-06</strong></td><td>70</td><td>+0.131</td><td>Shiliquan power station <small style="color:#94a3b8;">(Shandong)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>1.480</strong></td></tr><tr><td><strong>2026-05-05</strong></td><td>69</td><td>+0.176</td><td>Qitaihe power station <small style="color:#94a3b8;">(Heilongjiang)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.642</strong></td></tr><tr><td><strong>2026-05-04</strong></td><td>123</td><td>+0.160</td><td>Hubei Ezhou power station <small style="color:#94a3b8;">(Hubei)</small> <span class="badge badge-ets">ETS</span></td><td><strong>0.985</strong></td></tr><tr><td><strong>2026-05-03</strong></td><td>23</td><td>+0.149</td><td>Yingkou power station <small style="color:#94a3b8;">(Liaoning)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>1.210</strong></td></tr><tr><td><strong>2026-05-02</strong></td><td>23</td><td>+0.026</td><td>Gansu Zhengning power station <small style="color:#94a3b8;">(Gansu)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.740</strong></td></tr><tr><td><strong>2026-05-01</strong></td><td>78</td><td>+0.160</td><td>Huaneng Fuzhou power station <small style="color:#94a3b8;">(Fujian)</small> <span class="badge badge-ets">ETS</span></td><td><strong>2.560</strong></td></tr><tr><td><strong>2026-04-30</strong></td><td>84</td><td>+0.025</td><td>Pucheng power station <small style="color:#94a3b8;">(Shaanxi)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.677</strong></td></tr><tr><td><strong>2026-04-29</strong></td><td>72</td><td>+0.062</td><td>Hubei Yicheng power station <small style="color:#94a3b8;">(Hubei)</small> <span class="badge badge-ets">ETS</span></td><td><strong>0.750</strong></td></tr><tr><td><strong>2026-04-28</strong></td><td>29</td><td>-0.057</td><td>Jiangsu Energy Group Wulagai power sta <small style="color:#94a3b8;">(Inner Mongolia)</small> <span class="badge badge-ets">ETS</span></td><td><strong>0.640</strong></td></tr><tr><td><strong>2026-04-27</strong></td><td>68</td><td>+0.157</td><td>Fugu Miaogoumen power station <small style="color:#94a3b8;">(Shaanxi)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.638</strong></td></tr><tr><td><strong>2026-04-26</strong></td><td>76</td><td>+0.138</td><td>Ma'anshan power station <small style="color:#94a3b8;">(Anhui)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>1.320</strong></td></tr><tr><td><strong>2026-04-25</strong></td><td>54</td><td>+0.007</td><td>Huaneng Yueyang power station <small style="color:#94a3b8;">(Hunan)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.643</strong></td></tr><tr><td><strong>2026-04-24</strong></td><td>99</td><td>-0.063</td><td>Hebi power station <small style="color:#94a3b8;">(Henan)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.610</strong></td></tr><tr><td><strong>2026-04-23</strong></td><td>40</td><td>+0.095</td><td>Datang Dongying power station <small style="color:#94a3b8;">(Shandong)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>1.910</strong></td></tr><tr><td><strong>2026-04-22</strong></td><td>42</td><td>+0.030</td><td>Beihai power station <small style="color:#94a3b8;">(Guangxi)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.670</strong></td></tr><tr><td><strong>2026-04-21</strong></td><td>27</td><td>-0.008</td><td>Diandong power station <small style="color:#94a3b8;">(Yunnan)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.470</strong></td></tr><tr><td><strong>2026-04-20</strong></td><td>31</td><td>-0.083</td><td>Datang Sanmenxia power station <small style="color:#94a3b8;">(Henan)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.360</strong></td></tr><tr><td><strong>2026-04-19</strong></td><td>117</td><td>-0.032</td><td>Hezhou power station <small style="color:#94a3b8;">(Guangxi)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>1.130</strong></td></tr><tr><td><strong>2026-04-18</strong></td><td>55</td><td>-0.094</td><td>Huadian Laizhou power station <small style="color:#94a3b8;">(Shandong)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.658</strong></td></tr><tr><td><strong>2026-04-17</strong></td><td>74</td><td>+0.014</td><td>Shizuishan power station <small style="color:#94a3b8;">(Ningxia)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>0.557</strong></td></tr><tr><td><strong>2026-04-16</strong></td><td>17</td><td>+0.240</td><td>Tianchi Changji cogen power station <small style="color:#94a3b8;">(Xinjiang)</small> <span class="badge badge-ctrl">Ctrl</span></td><td><strong>1.160</strong></td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- Section 4: Top 20 plants -->
+  <div class="section">
+    <h2>🏆 Top 20 Plants by Recent SO<sub>2</sub></h2>
+    <p class="desc">Plants ranked by their mean SO<sub>2</sub> over the last 30 days. Red bars = ETS-treated plants; gray bars = Control.</p>
+    <img class="chart" src="chart_top_plants.png" alt="Top 20 plants by SO2">
+  </div>
+
+  <!-- Section 5: 2-col — provinces + yearly -->
+  <div class="twocol">
+    <div class="section" style="margin: 0;">
+      <h2>🌏 Province Ranking (30 days)</h2>
+      <p class="desc">Provinces sorted by average SO<sub>2</sub> over the last 30 days.</p>
+      <table>
+        <thead><tr><th>Province</th><th>Plants</th><th>Obs.</th><th>Mean SO<sub>2</sub></th></tr></thead>
+        <tbody><tr><td><strong>Guizhou</strong> </td><td>2</td><td>3</td><td>+0.231</td></tr><tr><td><strong>Heilongjiang</strong> </td><td>1</td><td>4</td><td>+0.199</td></tr><tr><td><strong>Hebei</strong> </td><td>6</td><td>52</td><td>+0.143</td></tr><tr><td><strong>Shaanxi</strong> </td><td>9</td><td>80</td><td>+0.140</td></tr><tr><td><strong>Tianjin</strong> <span class="badge badge-ets">ETS</span></td><td>2</td><td>16</td><td>+0.138</td></tr><tr><td><strong>Sichuan</strong> </td><td>2</td><td>10</td><td>+0.122</td></tr><tr><td><strong>Shanxi</strong> </td><td>10</td><td>91</td><td>+0.121</td></tr><tr><td><strong>Hubei</strong> <span class="badge badge-ets">ETS</span></td><td>8</td><td>48</td><td>+0.112</td></tr><tr><td><strong>Xinjiang</strong> </td><td>10</td><td>117</td><td>+0.109</td></tr><tr><td><strong>Yunnan</strong> </td><td>1</td><td>2</td><td>+0.105</td></tr><tr><td><strong>Hunan</strong> </td><td>8</td><td>43</td><td>+0.087</td></tr><tr><td><strong>Shandong</strong> </td><td>16</td><td>148</td><td>+0.082</td></tr><tr><td><strong>Guangxi</strong> </td><td>5</td><td>28</td><td>+0.079</td></tr><tr><td><strong>Shanghai</strong> <span class="badge badge-ets">ETS</span></td><td>3</td><td>21</td><td>+0.078</td></tr><tr><td><strong>Henan</strong> </td><td>13</td><td>117</td><td>+0.075</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="section" style="margin: 0;">
+      <h2>📊 Yearly Treated vs Control</h2>
+      <p class="desc">One row per year. T = treated (61 plants), C = control (154 plants). Diff column = treated minus control.</p>
+      <table>
+        <thead><tr><th>Year</th><th>T obs.</th><th>T mean</th><th>C obs.</th><th>C mean</th><th>Diff (T-C)</th></tr></thead>
+        <tbody><tr><td><strong>2019</strong></td><td>6,059</td><td>+0.0386</td><td>13,999</td><td>+0.0681</td><td class="text-gray"><strong>-0.0295</strong></td></tr><tr><td><strong>2020</strong></td><td>6,176</td><td>+0.0384</td><td>13,997</td><td>+0.0670</td><td class="text-gray"><strong>-0.0286</strong></td></tr><tr><td><strong>2021</strong></td><td>6,603</td><td>+0.0421</td><td>14,931</td><td>+0.0695</td><td class="text-gray"><strong>-0.0275</strong></td></tr><tr><td><strong>2022</strong></td><td>6,432</td><td>+0.0485</td><td>15,308</td><td>+0.0667</td><td class="text-gray"><strong>-0.0182</strong></td></tr><tr><td><strong>2023</strong></td><td>6,279</td><td>+0.0483</td><td>15,648</td><td>+0.0555</td><td class="text-gray"><strong>-0.0072</strong></td></tr><tr><td><strong>2024</strong></td><td>5,677</td><td>+0.0461</td><td>14,494</td><td>+0.0591</td><td class="text-gray"><strong>-0.0130</strong></td></tr><tr><td><strong>2025</strong></td><td>6,254</td><td>+0.0719</td><td>15,079</td><td>+0.0573</td><td class="text-red"><strong>+0.0145</strong></td></tr><tr><td><strong>2026</strong></td><td>2,367</td><td>+0.0473</td><td>5,402</td><td>+0.0525</td><td class="text-gray"><strong>-0.0052</strong></td></tr></tbody>
+      </table>
+      <div style="margin-top:14px; padding:12px 16px; background:#fff7ed; border-left:4px solid #f97316; border-radius:6px; font-size:13px; color:#7c2d12; line-height:1.6;">
+        <strong>⚠ 2025 数据警告:</strong> 2025 年 treated 均值受少数 plant-quarter 异常值影响——重庆地区的 Luohuang (2025Q4 mean ≈ +6.4 DU, n=8 有效天)和 Wanzhou (2025Q4 ≈ +1.9 DU, n=11)两家电厂把 treated 全年均值拉高了约一倍。median 比 mean 更稳健。论文级估计应该 winsorize 在 99 分位,或要求 n_valid_days &ge; 10。
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Quarterly chart + naive DiD explainer -->
+  <div class="section">
+    <h2>📉 Quarterly Trend (2019Q1 — 2026Q1)</h2>
+    <p class="desc">Quarterly aggregation following Steven (2021) Section 5 methodology. Blue dashed line marks 2021Q3 — China's national ETS launch (2021-07-16).</p>
+    <img class="chart" src="chart_treated_vs_control_quarterly.png" alt="Quarterly chart">
+
+    <div class="explainer">
+      <h3>📚 什么是 Naive 2×2 DiD ?</h3>
+      <p><strong>DiD</strong> = Difference-in-Differences(双重差分),计量经济学经典因果方法,衡量"治疗组"和"对照组"在某政策事件前后的"差异之差"。</p>
+      <p><strong>Naive 2×2</strong> 是最简单的版本 — 把样本切成 4 个格子:
+      <em>treated×pre / treated×post / control×pre / control×post</em>,直接做差。
+      <strong>缺陷:</strong>没有任何控制变量,没有 plant 固定效应,没有 time 固定效应。
+      所有混杂因素(ULE 标准、APPC 区域、Air Ten 计划、COVID 经济冲击、天气)
+      都被算成 "ETS 治疗效应"。</p>
+      <p><strong>Steven 2021 paper 用的是严格 staggered TWFE</strong>,加 plant FE + year-quarter FE +
+      ULE × Year-Quarter + APPC × Year-Quarter + Region × Year-Quarter,
+      估出 ATT = <strong style="color:var(--green-700);">+5.5% 到 +6.9%</strong>。
+      <strong>我们当前的 naive 2×2 给出 +79%</strong>,差 ~10 倍 — 这是因为 naive 估计不可信,
+      Phase B 做正式 TWFE 后会回到单位数。</p>
+    </div>
+
+    <div class="caveat">
+      <strong>注意:</strong>本页所有数字基于 NASA OMSO2e <strong>V004</strong>(整柱 SO<sub>2</sub>),
+      而 Steven 2021 paper 使用 <strong>V003 PBL</strong>(边界层 SO<sub>2</sub>) — 物理量不同,
+      数值不可直接比较。V003 robustness 序列计划下一波运行。
+    </div>
+  </div>
+
+  <!-- Section 7: Downloads -->
+  <div class="section">
+    <h2>📦 Data Downloads</h2>
+    <p class="desc">CSV files open in Excel / Stata / R / Python. Excel files (.xlsx) come with color-coded formatting.</p>
+    <div class="downloads">
+      <a href="recent_30days_daily.csv" class="dl-card">
+        <span class="icon">📊</span>
+        <div><div class="label">最近 30 天日级数据</div><div class="size">CSV · 705 KB · 6,450 rows</div></div>
+      </a>
+      <a href="quarterly_by_date.csv" class="dl-card">
+        <span class="icon">📈</span>
+        <div><div class="label">完整季度数据 (2019-2026)</div><div class="size">CSV · 987 KB · 6,450 rows · sorted by date</div></div>
+      </a>
+      <a href="plants_china_filtered_v2.xlsx" class="dl-card">
+        <span class="icon">🏭</span>
+        <div><div class="label">215 plants 电厂明细</div><div class="size">Excel · 23 KB · 4 sheets</div></div>
+      </a>
+      <a href="summary_treated_vs_control.csv" class="dl-card">
+        <span class="icon">📋</span>
+        <div><div class="label">年度 Treated vs Control 汇总</div><div class="size">CSV · 1 KB</div></div>
+      </a>
+      <a href="quick_stats.txt" class="dl-card">
+        <span class="icon">📝</span>
+        <div><div class="label">Naive DiD 统计摘要</div><div class="size">TXT · 2 KB</div></div>
+      </a>
+      <a href="任务必读.md" class="dl-card">
+        <span class="icon">📘</span>
+        <div><div class="label">任务必读 — 项目大纲 + Paper 解析</div><div class="size">Markdown · 12 KB</div></div>
+      </a>
+    </div>
+    <div class="caveat" style="margin-top:24px;">
+      <strong>说明:</strong> 完整日级数据(62 MB, 2019-2026 全 576,630 行)未上传到 GitHub
+      (single-file 100MB 限制)。需要原始日级 CSV 请联系 Yaonan Liu。
+    </div>
+  </div>
+
+  <!-- Section 8: Methodology -->
+  <div class="section">
+    <h2>📋 Methodology</h2>
+    <p>本 pipeline 严格复刻 <strong>Steven (Ruoyu) Chen (2021)</strong> SSRN paper #3963306 卫星方法,
+    并扩展到 2026 年数据窗口,以测度国家碳市场(2021-07 启动)对 ETS 试点电厂排放的影响。</p>
+    <div class="stats-inline">
+      <div class="stat"><div class="num">215</div><div class="label">Plants</div></div>
+      <div class="stat"><div class="num">2,682</div><div class="label">Days</div></div>
+      <div class="stat"><div class="num">35 km</div><div class="label">Sampling radius</div></div>
+      <div class="stat"><div class="num">V004</div><div class="label">OMSO2e version</div></div>
+      <div class="stat"><div class="num">02:30 UTC</div><div class="label">Daily update</div></div>
+    </div>
+    <ul style="margin-top:12px; padding-left:24px; color:#475569; line-height: 2;">
+      <li><strong>样本</strong>:GCPT 2026.1 release → 215 中国 ≥1,700 MW 操作型煤电厂 (61 treated + 154 control)</li>
+      <li><strong>因变量</strong>:NASA Aura/OMI <code>OMSO2e v004</code> SO<sub>2</sub> 柱浓度,Dobson Units</li>
+      <li><strong>空间聚合</strong>:每个电厂坐标 35 km 半径圆内像素均值(Karplus, Zhang & Almond 2018)</li>
+      <li><strong>时间聚合</strong>:日级 → 季度均值(Steven paper Section 5)</li>
+      <li><strong>分组</strong>:61 treated (Beijing, Tianjin, Shanghai, Guangdong, Hubei, Chongqing, Inner Mongolia, Fujian) + 154 control</li>
+      <li><strong>自动化</strong>:Windows Task Scheduler 每日 02:30 拉新数据 → 重生成图表 → 自动更新本页面</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  <div style="margin-bottom: 12px; font-weight: 700; color: var(--gray-700);">
+    Maintained by <strong>Yaonan Liu</strong>, Research Assistant<br>
+    Prof. Steven (Ruoyu) Chen · University of Windsor
+  </div>
+  <a href="mailto:zongnan999@gmail.com">📧 Contact</a> ·
+  Auto-updated daily at 02:30 UTC ·
+  <a href="https://github.com/">GitHub Source</a>
+  <div style="margin-top: 16px; font-size: 11px; color: var(--gray-300);">
+    Data: NASA GES DISC · Pipeline: Python (earthaccess, h5py, pandas, matplotlib)
+  </div>
+</footer>
+
+</body>
+</html>
