@@ -1,12 +1,12 @@
 OMI SO2 Plant-Level — Quick Stats
 ==================================================
 Source     : omi_omso2e_v004_plant_daily.csv
-Period     : 2019-01-01 to 2026-06-14
+Period     : 2019-01-01 to 2026-07-24
 Plants     : 215 (61 treated, 154 control)
-Daily rows : 582,220
-Valid days : 155,697 (26.7%)
+Daily rows : 606,515
+Valid days : 161,332 (26.6%)
 
-Quarterly rows: 6,450
+Quarterly rows: 6,664
 
 Yearly mean SO2 (DU) by treatment:
  year  treated  so2_mean  so2_median  n_plant_quarters
@@ -24,19 +24,19 @@ Yearly mean SO2 (DU) by treatment:
  2024        1  0.047005    0.038167               244
  2025        0  0.064747    0.048661               616
  2025        1  0.146478    0.035000               244
- 2026        0  0.050961    0.047000               308
- 2026        1  0.042124    0.033988               122
+ 2026        0  0.054747    0.047500               461
+ 2026        1  0.037568    0.041667               183
 
 Pre/Post 2021Q3 (national ETS) comparison:
      period  treated  so2_mean  so2_median  n_plant_quarters
-post-2021Q3        0  0.060976    0.048417              3080
-post-2021Q3        1  0.067846    0.038000              1220
+post-2021Q3        0  0.061042    0.048500              3233
+post-2021Q3        1  0.065970    0.038333              1281
  pre-2021Q3        0  0.068303    0.055000              1540
  pre-2021Q3        1  0.038059    0.031667               610
 
-Naive DiD (no controls, no fixed effects): +0.0371 DU
+Naive DiD (no controls, no fixed effects): +0.0352 DU
 
-Outlier plant-quarters (mean > 1 DU or n_valid_days < 5): 45 of 6,450
+Outlier plant-quarters (mean > 1 DU or n_valid_days < 5): 112 of 6,664
   Chongqing Shuanghuai power station       2025Q4 mean=+14.7807 n_days=  5  TREATED
   Luohuang power station                   2025Q4 mean=+6.3937 n_days=  8  TREATED
   Guang'an power station                   2025Q4 mean=+4.8257 n_days=  7  control
@@ -45,8 +45,8 @@ Outlier plant-quarters (mean > 1 DU or n_valid_days < 5): 45 of 6,450
   Guangdong Shaoguan power station         2019Q2 mean=+0.5100 n_days=  1  TREATED
   Hezhou power station                     2021Q2 mean=+0.3823 n_days=  3  control
   Xiangtan power station                   2024Q2 mean=+0.3681 n_days=  4  control
+  Xuzhou Pengcheng power station           2026Q3 mean=+0.3543 n_days=  4  control
   Liyujiang power station                  2024Q2 mean=+0.3440 n_days=  1  control
-  Shenhua Qingyuan power station           2021Q2 mean=+0.2617 n_days=  4  TREATED
 
 Caveats:
   - This is a naive 2x2 DiD, not the staggered TWFE Steven uses.
